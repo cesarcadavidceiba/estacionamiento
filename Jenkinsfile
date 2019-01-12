@@ -50,7 +50,8 @@ pipeline {
 		stage('Unit Tests') {
 			steps{
 				echo "------------>Unit Tests<------------"
-				//sh 'gradle test'
+				sh 'cd backend'
+				sh 'gradle test'
 				//junit '**/build/test-results/test/*.xml' 
 				//step( [ $class: 'JacocoPublisher' ] )
 			}
