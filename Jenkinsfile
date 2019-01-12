@@ -43,7 +43,7 @@ pipeline {
 			steps{
 				echo "------------>Unit Tests<------------"
 				sh 'gradle --b ./backend/build.gradle test'
-				junit '**/backend/build/test-results/test/*.xml' 
+				junit '**/backend/build/test-results/test/*Test.xml' 
 				step( [ $class: 'JacocoPublisher' ] )
 			}
 		}
@@ -82,7 +82,7 @@ pipeline {
 		
 		success {
 			echo 'This will run only if successful'
-			junit '**/backend/build/test-results/test/*.xml'
+			junit '**/backend/build/test-results/test/*Test.xml'
 		}
 		
 		failure {
