@@ -28,7 +28,6 @@ pipeline {
 				'Git_Centos' , submoduleCfg: [], userRemoteConfigs: [[ credentialsId:
 				'GitHub_cesarcadavid', url:
 				'https://github.com/cesarcadavidceiba/estacionamiento']]])
-				//sh 'gradle clean'
 			}
 		}
 		
