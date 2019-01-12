@@ -57,9 +57,9 @@ pipeline {
 		stage('Static Code Analysis') {
 			steps{
 				echo '------------>Análisis de código estático<------------'
-				//withSonarQubeEnv( 'Sonar' ) {
-				//sh "${tool name: 'SonarScanner', type:'hudson.plugins.sonar.SonarRunnerInstallation'}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
-				//}
+				withSonarQubeEnv( 'Sonar' ) {
+				  sh "${tool name: 'SonarScanner', type:'hudson.plugins.sonar.SonarRunnerInstallation'}/bin/sonar-scanner -Dproject.settings=/backend/sonar-project.properties"
+				}
 			}
 		}
 		
@@ -82,7 +82,7 @@ pipeline {
 		
 		success {
 			echo 'This will run only if successful'
-			//junit '**/build/test-results/test/*.xml'
+			junit '**/backend/build/test-results/test/*.xml'
 		}
 		
 		failure {
