@@ -1,0 +1,22 @@
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  datasource:
+    initialization-mode: always
+    hikari:
+      jdbc-url: jdbc:h2:file:./bd/estacionamiento
+      driver-class-name: org.h2.Driver
+  jpa:
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate.generate_statistics: false
+    hibernate:
+      use-new-id-generator-mappings: true
+  jackson:    default-property-inclusion: non-absent
+
+server:
+  port: 8090
+  
