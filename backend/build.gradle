@@ -23,3 +23,9 @@ dependencies {
 bootJar {
     mainClassName = "co.com.ceiba.estacionamiento.Aplicacion"
 }
+
+task('hello') {
+    doLast {
+        println "hello"
+    }
+}
