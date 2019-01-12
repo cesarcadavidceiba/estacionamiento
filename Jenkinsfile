@@ -48,14 +48,6 @@ pipeline {
 			}
 		}
 		
-		stage('Build') {
-			steps {
-				echo "------------>Build<------------"
-				//Construir sin tarea test que se ejecutó previamente
-				sh ' gradle --b ./backend/build.gradle build -x test '
-			}
-		}
-		
 		stage('Integration Tests') {
 			steps {
 				echo "------------>Integration Tests<------------"
@@ -68,6 +60,14 @@ pipeline {
 				//withSonarQubeEnv( 'Sonar' ) {
 				//sh "${tool name: 'SonarScanner', type:'hudson.plugins.sonar.SonarRunnerInstallation'}/bin/sonar-scanner -Dproject.settings=sonar-project.properties"
 				//}
+			}
+		}
+		
+		stage('Build') {
+			steps {
+				echo "------------>Build<------------"
+				//Construir sin tarea test que se ejecutó previamente
+				sh ' gradle --b ./backend/build.gradle build -x test '
 			}
 		}
 		
