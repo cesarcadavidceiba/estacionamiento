@@ -1,6 +1,7 @@
 plugins {
-	id 'eclipse'
-    id 'java-library'
+	id "eclipse"
+    id "java-library"
+    id "jacoco"
     id "org.springframework.boot" version "2.1.1.RELEASE"
     id "io.spring.dependency-management" version "1.0.6.RELEASE"
 }
@@ -22,3 +23,13 @@ dependencies {
 bootJar {
     mainClassName = "co.com.ceiba.estacionamiento.Aplicacion"
 }
+
+test {
+	jacoco {
+		append = false
+		destinationFile = file('jacoco/jacocoTest.exec')
+	}
+	reports.junitXml.destination = file('jacoco/test-results')
+}
+
+jacocoTestReport.dependsOn(test)

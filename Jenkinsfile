@@ -43,8 +43,8 @@ pipeline {
 			steps{
 				echo "------------>Unit Tests<------------"
 				sh 'gradle --b ./backend/build.gradle test'
-				//junit '**/build/test-results/test/*.xml' 
-				//step( [ $class: 'JacocoPublisher' ] )
+				junit '**/build/test-results/test/*.xml' 
+				step( [ $class: 'JacocoPublisher' ] )
 			}
 		}
 		
