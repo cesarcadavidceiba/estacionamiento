@@ -37,6 +37,15 @@ pipeline {
 				echo '------------>Compile<------------'
 				sh 'gradle --b ./backend/build.gradle compileJava'
 			}
+		}		
+		
+		stage('Unit Tests') {
+			steps{
+				echo "------------>Unit Tests<------------"
+				sh 'gradle --b ./backend/build.gradle test'
+				//junit '**/build/test-results/test/*.xml' 
+				//step( [ $class: 'JacocoPublisher' ] )
+			}
 		}
 		
 		stage('Build') {
@@ -44,16 +53,6 @@ pipeline {
 				echo "------------>Build<------------"
 				//Construir sin tarea test que se ejecutó previamente
 				sh ' gradle --b ./backend/build.gradle build -x test '
-			}
-		}		
-		
-		stage('Unit Tests') {
-			steps{
-				echo "------------>Unit Tests<------------"
-				sh 'cd backend'
-				sh 'gradle test'
-				//junit '**/build/test-results/test/*.xml' 
-				//step( [ $class: 'JacocoPublisher' ] )
 			}
 		}
 		
