@@ -4,6 +4,7 @@
 # compiled output
 dist/
 /tmp
+bd/
 /out-tsc
 /docs/build
 bin/
