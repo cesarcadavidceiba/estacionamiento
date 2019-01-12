@@ -32,6 +32,13 @@ pipeline {
 			}
 		}
 		
+		stage('Clean') {
+			steps{
+				echo '------------>Clean<------------'
+				sh 'gradle --b ./backend/build.gradle clean'
+			}
+		}
+		
 		stage('Compile') {
 			steps{
 				echo '------------>Compile<------------'
@@ -43,7 +50,7 @@ pipeline {
 			steps{
 				echo "------------>Unit Tests<------------"
 				sh 'gradle --b ./backend/build.gradle test'
-				junit '**/backend/build/test-results/test/*Test.xml' 
+				junit '**/backend/build/test-results/test/*.xml' 
 				step( [ $class: 'JacocoPublisher' ] )
 			}
 		}
@@ -82,7 +89,7 @@ pipeline {
 		
 		success {
 			echo 'This will run only if successful'
-			junit '**/backend/build/test-results/test/*Test.xml'
+			junit '**/backend/build/test-results/test/*.xml'
 		}
 		
 		failure {
