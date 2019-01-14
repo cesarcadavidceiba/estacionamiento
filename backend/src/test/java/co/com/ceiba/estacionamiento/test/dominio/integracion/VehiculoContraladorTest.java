@@ -29,7 +29,7 @@ import co.com.ceiba.estacionamiento.test.testdatabuilder.FacturaVehiculoTestData
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Aplicacion.class)
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
-public class RestControlladorTest {
+public class VehiculoContraladorTest {
 
 	@Autowired
 	private MockMvc mvc;
@@ -44,9 +44,10 @@ public class RestControlladorTest {
 	private static final String PLACA_CARRO = "DUX 258";
 
 	@Test
-	public void cuandoValidaEntrada_EntoncesEstacionarUnVehiculo() throws IOException, Exception {
+	public void ingresoVehiculoTest() throws IOException, Exception {
 		// Arrange
-		FacturaVehiculoTestDataBuilder facturaVehiculoTestDataBuilder = new FacturaVehiculoTestDataBuilder().conPlaca("DUX 258");
+		FacturaVehiculoTestDataBuilder facturaVehiculoTestDataBuilder = new FacturaVehiculoTestDataBuilder()
+				.conPlaca("DUX 258");
 		FacturaVehiculoModel estacionarDuster = facturaVehiculoTestDataBuilder.build();
 
 		mvc.perform(post("/api/vehiculos").accept(MediaType.APPLICATION_JSON)

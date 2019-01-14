@@ -1,45 +1,50 @@
 package co.com.ceiba.estacionamiento.enumerados;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum EtipoVehiculo {
 
 	CARRO {
 
 		@Override
-		public short getId() {
-			return 1;
+		public int getId() {
+			return 0;
 		}
 
 		@Override
-		public String getDescripcion() {
-			return "Carro";
+		public int getValorHora() {
+			return 1000;
+		}
+
+		@Override
+		public int getValorDia() {
+			return 8000;
 		}
 
 	},
 	MOTO {
 
 		@Override
-		public short getId() {
-			return 2;
+		public int getId() {
+			return 1;
 		}
 
 		@Override
-		public String getDescripcion() {
-			return "Moto";
+		public int getValorHora() {
+			return 500;
+		}
+
+		@Override
+		public int getValorDia() {
+			return 4000;
 		}
 
 	};
 
-	public abstract short getId();
+	@JsonValue
+	public abstract int getId();
 
-	public abstract String getDescripcion();
+	public abstract int getValorHora();
 
-	public String getDescripcion(short id) {
-		for (EtipoVehiculo tipo : EtipoVehiculo.values()) {
-			if (tipo.getId() == id) {
-				return tipo.getDescripcion();
-			}
-		}
-		return null;
-	}
-
+	public abstract int getValorDia();
 }

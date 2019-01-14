@@ -1,12 +1,34 @@
 package co.com.ceiba.estacionamiento.servicios;
 
-import co.com.ceiba.estacionamiento.entidades.FacturaVehiculo;
+import java.util.List;
+
 import co.com.ceiba.estacionamiento.modelos.FacturaVehiculoModel;
 
 public interface FacturaVehiculoService {
 
-	public FacturaVehiculo findFacturaVehiculoById(long idFactura);
+	/**
+	 * 
+	 * Permite cargar la factura de un vehiculo de acuerdo al id de la factura
+	 * 
+	 * @return
+	 */
+	public List<FacturaVehiculoModel> cargarVehiculosEstacionados();
 
-	public void registrarVehiculo(FacturaVehiculoModel facturaVehiculoModel);
+	/**
+	 * 
+	 * Registra un vehiculo para estacionar
+	 * 
+	 * @param facturaVehiculoModel
+	 * @return devuelve el id generado de la factura
+	 */
+	public long registrarVehiculo(FacturaVehiculoModel facturaVehiculoModel);
 
+	/**
+	 * 
+	 * Permite dar salida a un vehiculo estacionado
+	 * 
+	 * @param placa
+	 * @return Valor a pagar por el cliente
+	 */
+	public String darSalidaVehiculoEstacionado(String placa);
 }

@@ -8,7 +8,7 @@ import co.com.ceiba.estacionamiento.modelos.FacturaVehiculoModel;
 public class FacturaVehiculoTestDataBuilder {
 	// Constantes
 	private static final LocalDateTime FECHA_ENTRADA = LocalDateTime.now();
-	private static final short TIPO = EtipoVehiculo.CARRO.getId();
+	private static final EtipoVehiculo TIPO = EtipoVehiculo.CARRO;
 	private static final String PLACA = "DUX 258";
 	private static final String MARCA = "RENAULD";
 	private static final String MODELO = "2018";
@@ -28,11 +28,9 @@ public class FacturaVehiculoTestDataBuilder {
 
 	private Integer cilindraje;
 
-	private short tipo;
+	private EtipoVehiculo tipo;
 
 	private short posicion;
-
-	private short swActiva;
 
 	public FacturaVehiculoTestDataBuilder conFechaEntrada(LocalDateTime fechaEntrada) {
 		this.fechaEntrada = fechaEntrada;
@@ -64,19 +62,14 @@ public class FacturaVehiculoTestDataBuilder {
 		return this;
 	}
 
-	public FacturaVehiculoTestDataBuilder conTipo(short tipo) {
+	public FacturaVehiculoTestDataBuilder conTipo(EtipoVehiculo tipo) {
 		this.tipo = tipo;
-		return this;
-	}
-
-	public FacturaVehiculoTestDataBuilder conSwActiva(short swActiva) {
-		this.swActiva = swActiva;
 		return this;
 	}
 
 	public FacturaVehiculoModel build() {
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModel(this.fechaEntrada, this.placa, this.marca,
-				this.modelo, this.cilindraje, this.tipo, this.posicion, this.swActiva);
+				this.modelo, this.cilindraje, this.tipo, this.posicion);
 		facturaVehiculoModel.setFechaSalida(this.fechaSalida);
 		return facturaVehiculoModel;
 	}
