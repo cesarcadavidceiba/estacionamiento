@@ -1,18 +1,22 @@
 package co.com.ceiba.estacionamiento.modelos;
 
-import java.util.Date;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import co.com.ceiba.estacionamiento.enumerados.EActiva;
+import co.com.ceiba.estacionamiento.excepciones.VehiculoNoPuedeIngresarExcepcion;
+import co.com.ceiba.estacionamiento.util.LocalDateTimeWrapper;
 
 public class FacturaVehiculoModel {
 
 	private long idFactura;
 
-	private int cantidadHoras;
+	private LocalDateTime fechaEntrada;
 
-	private double valorFactura;
-
-	private Date fechaEntrada;
-
-	private Date fechaSalida;
+	private LocalDateTime fechaSalida;
 
 	private String placa;
 
@@ -24,37 +28,64 @@ public class FacturaVehiculoModel {
 
 	private short tipo;
 
-	public FacturaVehiculoModel(int cantidadHoras, double valorFactura, Date fechaEntrada, Date fechaSalida,
-			String placa, String marca, String modelo, Integer cilindraje, short tipo) {
+	private short posicion;
+
+	private short swActiva;
+
+	// Constantes
+	private static final String PLACA_INICIA_CON_A = "A";
+	
+	@JsonCreator
+	public FacturaVehiculoModel(@JsonProperty("fechaEntrada") LocalDateTime fechaEntrada, 
+			@JsonProperty("placa") String placa, @JsonProperty("marca") String marca, 
+			@JsonProperty("modelo") String modelo,
+			@JsonProperty("cilindraje") Integer cilindraje, 
+			@JsonProperty("tipo") short tipo, 
+			@JsonProperty("posicion") short posicion, 
+			@JsonProperty("swActiva") short swActiva) {
 		super();
-		this.cantidadHoras = cantidadHoras;
-		this.valorFactura = valorFactura;
 		this.fechaEntrada = fechaEntrada;
-		this.fechaSalida = fechaSalida;
 		this.placa = placa;
 		this.marca = marca;
 		this.modelo = modelo;
 		this.cilindraje = cilindraje;
 		this.tipo = tipo;
+		this.posicion = posicion;
+		this.swActiva = swActiva;
 	}
+
+	// Acciones
+	public void vehiculoPuedeEstacionar() {
+		if (placa.startsWith(PLACA_INICIA_CON_A)) {
+			DayOfWeek dayOfWeek = new LocalDateTimeWrapper().now().getDayOfWeek();
+			if (dayOfWeek != DayOfWeek.SUNDAY && dayOfWeek != DayOfWeek.MONDAY) {
+				throw new VehiculoNoPuedeIngresarExcepcion();
+			}
+		}
+
+		fechaEntrada = new LocalDateTimeWrapper().now();
+		swActiva = EActiva.SI.getId();
+	}
+
+	public int obtenerCantidadHoras() {
+		return 0;
+	}
+
+	public String obtenerValorFactura() {
+		return null;
+	}
+
+	// Getter
 
 	public long getIdFactura() {
 		return idFactura;
 	}
 
-	public int getCantidadHoras() {
-		return cantidadHoras;
-	}
-
-	public double getValorFactura() {
-		return valorFactura;
-	}
-
-	public Date getFechaEntrada() {
+	public LocalDateTime getFechaEntrada() {
 		return fechaEntrada;
 	}
 
-	public Date getFechaSalida() {
+	public LocalDateTime getFechaSalida() {
 		return fechaSalida;
 	}
 
@@ -76,6 +107,20 @@ public class FacturaVehiculoModel {
 
 	public short getTipo() {
 		return tipo;
+	}
+
+	public short getPosicion() {
+		return posicion;
+	}
+
+	public short getSwActiva() {
+		return swActiva;
+	}
+
+	// Setter
+
+	public void setFechaSalida(LocalDateTime fechaSalida) {
+		this.fechaSalida = fechaSalida;
 	}
 
 }

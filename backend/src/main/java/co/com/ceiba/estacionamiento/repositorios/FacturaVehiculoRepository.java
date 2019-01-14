@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import co.com.ceiba.estacionamiento.entidades.FacturaVehiculo;
 
-@Repository("facturaVehiculoRepository")
+@Repository
 public interface FacturaVehiculoRepository extends JpaRepository<FacturaVehiculo, Serializable> {
 
-	public abstract FacturaVehiculo findByIdFactura(long id);
-
+	public FacturaVehiculo findByIdFactura(long id);
+	
 }

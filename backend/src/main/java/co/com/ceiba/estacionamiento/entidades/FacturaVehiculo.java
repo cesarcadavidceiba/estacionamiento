@@ -1,12 +1,15 @@
 package co.com.ceiba.estacionamiento.entidades;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import co.com.ceiba.estacionamiento.enumerados.EActiva;
+import co.com.ceiba.estacionamiento.modelos.FacturaVehiculoModel;
 
 @Entity
 @Table(name = "factura_vehiculo")
@@ -17,17 +20,11 @@ public class FacturaVehiculo {
 	@Column(name = "id_factura")
 	private long idFactura;
 
-	@Column(name = "cantidadHoras")
-	private int cantidadHoras;
-
-	@Column(name = "valorFactura")
-	private double valorFactura;
-
 	@Column(name = "fechaEntrada")
-	private Date fechaEntrada;
+	private LocalDateTime fechaEntrada;
 
 	@Column(name = "fechaSalida")
-	private Date fechaSalida;
+	private LocalDateTime fechaSalida;
 
 	@Column(name = "placa")
 	private String placa;
@@ -49,14 +46,15 @@ public class FacturaVehiculo {
 
 	@Column(name = "sw_activa")
 	private short swActiva;
+	
+	public FacturaVehiculo() {
+		
+	}
 
-	public FacturaVehiculo(int cantidadHoras, double valorFactura, Date fechaEntrada, Date fechaSalida, String placa,
-			String marca, String modelo, Integer cilindraje, short tipo, short posicion, short swActiva) {
+	public FacturaVehiculo(LocalDateTime fechaEntrada, String placa, String marca, String modelo, Integer cilindraje,
+			short tipo, short posicion, short swActiva) {
 		super();
-		this.cantidadHoras = cantidadHoras;
-		this.valorFactura = valorFactura;
 		this.fechaEntrada = fechaEntrada;
-		this.fechaSalida = fechaSalida;
 		this.placa = placa;
 		this.marca = marca;
 		this.modelo = modelo;
@@ -66,23 +64,17 @@ public class FacturaVehiculo {
 		this.swActiva = swActiva;
 	}
 
+	// Getter
+
 	public long getIdFactura() {
 		return idFactura;
 	}
 
-	public int getCantidadHoras() {
-		return cantidadHoras;
-	}
-
-	public double getValorFactura() {
-		return valorFactura;
-	}
-
-	public Date getFechaEntrada() {
+	public LocalDateTime getFechaEntrada() {
 		return fechaEntrada;
 	}
 
-	public Date getFechaSalida() {
+	public LocalDateTime getFechaSalida() {
 		return fechaSalida;
 	}
 
@@ -114,52 +106,22 @@ public class FacturaVehiculo {
 		return posicion;
 	}
 
-	public void setPosicion(short posicion) {
-		this.posicion = posicion;
-	}
+	// Sets
 
-	public void setIdFactura(long idFactura) {
-		this.idFactura = idFactura;
-	}
-
-	public void setCantidadHoras(int cantidadHoras) {
-		this.cantidadHoras = cantidadHoras;
-	}
-
-	public void setValorFactura(double valorFactura) {
-		this.valorFactura = valorFactura;
-	}
-
-	public void setFechaEntrada(Date fechaEntrada) {
-		this.fechaEntrada = fechaEntrada;
-	}
-
-	public void setFechaSalida(Date fechaSalida) {
+	public void setFechaSalida(LocalDateTime fechaSalida) {
 		this.fechaSalida = fechaSalida;
 	}
 
-	public void setPlaca(String placa) {
-		this.placa = placa;
+	public static FacturaVehiculo convertirAEntity(FacturaVehiculoModel facturaVehiculoModel) {
+		return new FacturaVehiculo(facturaVehiculoModel.getFechaEntrada(), facturaVehiculoModel.getPlaca(),
+				facturaVehiculoModel.getMarca(), facturaVehiculoModel.getModelo(), facturaVehiculoModel.getCilindraje(),
+				facturaVehiculoModel.getTipo(), facturaVehiculoModel.getPosicion(), facturaVehiculoModel.getSwActiva());
 	}
 
-	public void setMarca(String marca) {
-		this.marca = marca;
-	}
-
-	public void setModelo(String modelo) {
-		this.modelo = modelo;
-	}
-
-	public void setCilindraje(Integer cilindraje) {
-		this.cilindraje = cilindraje;
-	}
-
-	public void setTipo(short tipo) {
-		this.tipo = tipo;
-	}
-
-	public void setSwActiva(short swActiva) {
-		this.swActiva = swActiva;
+	public static FacturaVehiculo convertirAModelo(FacturaVehiculo facturaVehiculo) {
+		return new FacturaVehiculo(facturaVehiculo.getFechaEntrada(), facturaVehiculo.getPlaca(),
+				facturaVehiculo.getMarca(), facturaVehiculo.getModelo(), facturaVehiculo.getCilindraje(),
+				facturaVehiculo.getTipo(), facturaVehiculo.getPosicion(), facturaVehiculo.getSwActiva());
 	}
 
 }
