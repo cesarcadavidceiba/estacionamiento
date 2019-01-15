@@ -1,4 +1,4 @@
-package co.com.ceiba.estacionamiento.test.controlador.integracion;
+package co.com.ceiba.estacionamiento.test.integracion;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -29,7 +29,7 @@ import co.com.ceiba.estacionamiento.test.testdatabuilder.FacturaVehiculoTestData
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Aplicacion.class)
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
-public class VehiculoContraladorPruebasIntegracion {
+public class VehiculoPruebasIntegracion {
 
 	@Autowired
 	private MockMvc mvc;

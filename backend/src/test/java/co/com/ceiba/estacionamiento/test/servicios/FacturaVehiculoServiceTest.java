@@ -141,6 +141,5 @@ public class FacturaVehiculoServiceTest {
 			// Assert
 			assertThat(ex.getMessage()).isEqualTo(NO_PUEDE_ESTACIONAR_DIA_NO_HABIL);
 		}
-
 	}
 }

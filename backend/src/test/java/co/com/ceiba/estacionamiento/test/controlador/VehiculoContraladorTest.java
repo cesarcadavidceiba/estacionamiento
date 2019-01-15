@@ -1,4 +1,4 @@
-package co.com.ceiba.estacionamiento.test.controlador.unitarias;
+package co.com.ceiba.estacionamiento.test.controlador;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -32,7 +32,7 @@ import co.com.ceiba.estacionamiento.test.testdatabuilder.FacturaVehiculoTestData
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(VehiculoControlador.class)
-public class VehiculoContraladorPruebasUnitarias {
+public class VehiculoContraladorTest {
 
 	@Autowired
 	private MockMvc mvc;
