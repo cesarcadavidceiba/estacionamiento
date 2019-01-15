@@ -1,6 +1,7 @@
 package co.com.ceiba.estacionamiento.servicios.impl;
 
-import java.time.LocalDateTime;
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import co.com.ceiba.estacionamiento.entidades.FacturaVehiculo;
 import co.com.ceiba.estacionamiento.enumerados.EtipoVehiculo;
-import co.com.ceiba.estacionamiento.excepciones.NoHayEstacionamientoDisponibleExcepcion;
+import co.com.ceiba.estacionamiento.excepciones.NoPuedeEstacionarDiaNoHabilExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.PosicionEstacionamientoOcupadaExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.VehiculoNoSeEncuentraEstacionadoExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.VehiculoSeEncuentraEstacionadoExcepcion;
@@ -23,14 +24,6 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 	// Constantes
 	private static final int CANTIDAD_MAXIMA_CARROS = 20;
 	private static final int CANTIDAD_MAXIMA_MOTOS = 10;
-	private static final int VALOR_HORA_CARRO = 1000;
-	private static final int VALOR_HORA_MOTO = 500;
-	private static final int VALOR_DIA_CARRO = 8000;
-	private static final int VALOR_DIA_MOTO = 4000;
-
-	private static final int CILINDRAJE_MOTO = 500;
-	private static final int VALOR_EXTRA_MOTO = 2000;
-	private static final int CERO = 0;
 
 	private FacturaVehiculoRepository facturaVehiculoRepository;
 
@@ -41,7 +34,7 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 	@Override
 	public List<FacturaVehiculoModel> cargarVehiculosEstacionados() {
 		List<FacturaVehiculo> listaVehiculosEstacionadosRepo = facturaVehiculoRepository.findAllByFechaSalidaIsNull();
-		if (listaVehiculosEstacionadosRepo != null && listaVehiculosEstacionadosRepo.isEmpty()) {
+		if (listaVehiculosEstacionadosRepo != null && !listaVehiculosEstacionadosRepo.isEmpty()) {
 			List<FacturaVehiculoModel> listaVehiculosEstacionados = new ArrayList<>();
 			for (FacturaVehiculo facturaVehiculo : listaVehiculosEstacionadosRepo) {
 				listaVehiculosEstacionados.add(FacturaVehiculo.convertirAModelo(facturaVehiculo));
@@ -49,7 +42,7 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 			return listaVehiculosEstacionados;
 		}
 
-		return null;
+		return emptyList();
 	}
 
 	@Override
@@ -63,11 +56,11 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 
 		if (facturaVehiculoModel.getTipo() == EtipoVehiculo.CARRO) {
 			if (cantidadVehiculosEstacionados == CANTIDAD_MAXIMA_CARROS) {
-				throw new NoHayEstacionamientoDisponibleExcepcion();
+				throw new NoPuedeEstacionarDiaNoHabilExcepcion();
 			}
 		} else {
 			if (cantidadVehiculosEstacionados == CANTIDAD_MAXIMA_MOTOS) {
-				throw new NoHayEstacionamientoDisponibleExcepcion();
+				throw new NoPuedeEstacionarDiaNoHabilExcepcion();
 			}
 		}
 
@@ -85,8 +78,10 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 		}
 
 		facturaVehiculo = FacturaVehiculo.convertirAEntity(facturaVehiculoModel);
-		facturaVehiculoRepository.save(facturaVehiculo);
-		return facturaVehiculo.getId();
+
+		FacturaVehiculo save = facturaVehiculoRepository.save(facturaVehiculo);
+
+		return save.getId();
 	}
 
 	@Override

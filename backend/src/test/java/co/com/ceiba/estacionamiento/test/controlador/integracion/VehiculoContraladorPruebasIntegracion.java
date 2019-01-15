@@ -1,4 +1,4 @@
-package co.com.ceiba.estacionamiento.test.dominio.integracion;
+package co.com.ceiba.estacionamiento.test.controlador.integracion;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -29,7 +29,7 @@ import co.com.ceiba.estacionamiento.test.testdatabuilder.FacturaVehiculoTestData
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Aplicacion.class)
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
-public class VehiculoContraladorTest {
+public class VehiculoContraladorPruebasIntegracion {
 
 	@Autowired
 	private MockMvc mvc;
@@ -40,15 +40,11 @@ public class VehiculoContraladorTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	// Constantes
-	private static final String PLACA_CARRO = "DUX 258";
-
 	@Test
 	public void ingresoVehiculoTest() throws IOException, Exception {
 		// Arrange
-		FacturaVehiculoTestDataBuilder facturaVehiculoTestDataBuilder = new FacturaVehiculoTestDataBuilder()
-				.conPlaca("DUX 258");
-		FacturaVehiculoModel estacionarDuster = facturaVehiculoTestDataBuilder.build();
+		FacturaVehiculoTestDataBuilder facturaVehiculoTestDataBuilder = new FacturaVehiculoTestDataBuilder();
+		FacturaVehiculoModel estacionarDuster = facturaVehiculoTestDataBuilder.buildModel();
 
 		mvc.perform(post("/api/vehiculos").accept(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsBytes(estacionarDuster)).contentType(MediaType.APPLICATION_JSON));

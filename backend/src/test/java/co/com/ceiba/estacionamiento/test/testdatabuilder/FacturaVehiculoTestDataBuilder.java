@@ -2,6 +2,7 @@ package co.com.ceiba.estacionamiento.test.testdatabuilder;
 
 import java.time.LocalDateTime;
 
+import co.com.ceiba.estacionamiento.entidades.FacturaVehiculo;
 import co.com.ceiba.estacionamiento.enumerados.EtipoVehiculo;
 import co.com.ceiba.estacionamiento.modelos.FacturaVehiculoModel;
 
@@ -15,6 +16,8 @@ public class FacturaVehiculoTestDataBuilder {
 	private static final short POSICION = Short.parseShort("1");
 
 	// Campos
+
+	private long id;
 
 	private LocalDateTime fechaEntrada;
 
@@ -31,6 +34,20 @@ public class FacturaVehiculoTestDataBuilder {
 	private EtipoVehiculo tipo;
 
 	private short posicion;
+
+	public FacturaVehiculoTestDataBuilder() {
+		this.fechaEntrada = FECHA_ENTRADA;
+		this.placa = PLACA;
+		this.tipo = TIPO;
+		this.marca = MARCA;
+		this.modelo = MODELO;
+		this.posicion = POSICION;
+	}
+
+	public FacturaVehiculoTestDataBuilder conId(long id) {
+		this.id = id;
+		return this;
+	}
 
 	public FacturaVehiculoTestDataBuilder conFechaEntrada(LocalDateTime fechaEntrada) {
 		this.fechaEntrada = fechaEntrada;
@@ -67,11 +84,18 @@ public class FacturaVehiculoTestDataBuilder {
 		return this;
 	}
 
-	public FacturaVehiculoModel build() {
+	public FacturaVehiculoModel buildModel() {
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModel(this.fechaEntrada, this.placa, this.marca,
 				this.modelo, this.cilindraje, this.tipo, this.posicion);
 		facturaVehiculoModel.setFechaSalida(this.fechaSalida);
 		return facturaVehiculoModel;
+	}
+
+	public FacturaVehiculo buildEntity() {
+		FacturaVehiculo facturaVehiculo = new FacturaVehiculo(this.fechaEntrada, this.placa, this.marca, this.modelo,
+				this.cilindraje, this.tipo, this.posicion);
+		facturaVehiculo.setId(this.id);
+		return facturaVehiculo;
 	}
 
 }
