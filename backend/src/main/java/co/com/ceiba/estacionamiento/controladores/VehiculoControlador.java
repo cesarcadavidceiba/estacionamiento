@@ -25,7 +25,7 @@ public class VehiculoControlador {
 
 	@PostMapping("/vehiculos")
 	public long ingresarVehiculoEstacionamiento(@RequestBody FacturaVehiculoModel facturaVehiculoModel) {
-		return facturaVehiculoService.registrarVehiculo(facturaVehiculoModel);
+		return facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
 	}
 
 	@PutMapping("/vehiculos/{placa}")

@@ -6,36 +6,57 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import co.com.ceiba.estacionamiento.entidades.FacturaVehiculo;
 import co.com.ceiba.estacionamiento.enumerados.EtipoVehiculo;
+import co.com.ceiba.estacionamiento.excepciones.EstacionamientoCarrosLlenoExcepcion;
+import co.com.ceiba.estacionamiento.excepciones.EstacionamientoMotosLlenoExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.NoPuedeEstacionarDiaNoHabilExcepcion;
+import co.com.ceiba.estacionamiento.excepciones.PosicionEstacionamientoOcupadaExcepcion;
+import co.com.ceiba.estacionamiento.excepciones.VehiculoSeEncuentraEstacionadoExcepcion;
 import co.com.ceiba.estacionamiento.modelos.FacturaVehiculoModel;
 import co.com.ceiba.estacionamiento.repositorios.FacturaVehiculoRepository;
 import co.com.ceiba.estacionamiento.servicios.FacturaVehiculoService;
 import co.com.ceiba.estacionamiento.servicios.impl.FacturaVehiculoServicesImpl;
 import co.com.ceiba.estacionamiento.test.testdatabuilder.FacturaVehiculoTestDataBuilder;
+import co.com.ceiba.estacionamiento.util.LocalDateTimeWrapper;
+import javassist.bytecode.Mnemonic;
 
 @RunWith(SpringRunner.class)
 public class FacturaVehiculoServiceTest {
 
 	// Constantes
 	private static final int CANTIDAD_MAXIMA_CARROS_ESTACIONADOS = 20;
-	private static final String NO_PUEDE_ESTACIONAR_DIA_NO_HABIL = "No puede estacionar por que no esta en un día hábil";
+	private static final int CANTIDAD_MAXIMA_MOTOS_ESTACIONADAS = 10;
+	private static final short POSICION_ESTACIONAMIENTO_VEHICULO = 1;
+	private static final LocalDateTime FECHA_ENTRADA = LocalDateTime.of(2019, Month.JANUARY, 14, 8, 20);
+
+	private static final String MSN_ESTACIONAMIENTO_CARROS_LLENO = "El estacionamiento para carros se encuentra lleno";
+	private static final String MSN_ESTACIONAMIENTO_MOTOS_LLENO = "El estacionamiento para motos se encuentra lleno";
+	private static final String MSN_POSICION_ESTACIONAMIENTO_OCUPADA = "La posición del estacionamiento que solicita se encuentra ocupada";
+	private static final String MSN_VEHICULO_ESTA_ESTACIONADO = "El vehiculo ya se encuentra estacionado";
+	private static final String MSN_NO_PUEDE_ESTACIONAR_DIA_NO_HABIL = "No puede estacionar por que no esta en un día hábil";
 
 	@MockBean
 	private FacturaVehiculoRepository facturaVehiculoRepository;
 
+	@MockBean
+	private LocalDateTimeWrapper localDateTimeWrapper; 
+	
 	@Before
 	public void setup() {
 		// Crear un build para esta entidad
@@ -53,7 +74,7 @@ public class FacturaVehiculoServiceTest {
 		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
 
 		// Act
-		long id = facturaVehiculoService.registrarVehiculo(facturaVehiculoModel);
+		long id = facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
 
 		// Assert
 		assertThat(id).isEqualTo(1L);
@@ -98,7 +119,7 @@ public class FacturaVehiculoServiceTest {
 	}
 
 	@Test
-	public void NohayVehiculosEstacionadosListaVacia() {
+	public void nohayVehiculosEstacionadosListaVaciaTest() {
 		// Arrange
 		when(facturaVehiculoRepository.findAllByFechaSalidaIsNull()).thenReturn(new ArrayList<FacturaVehiculo>());
 
@@ -112,7 +133,7 @@ public class FacturaVehiculoServiceTest {
 	}
 
 	@Test
-	public void NohayVehiculosEstacionadosListaNull() {
+	public void nohayVehiculosEstacionadosListaNullTest() {
 		// Arrange
 		when(facturaVehiculoRepository.findAllByFechaSalidaIsNull()).thenReturn(null);
 
@@ -125,7 +146,8 @@ public class FacturaVehiculoServiceTest {
 		assertTrue(listaVaciaModel.isEmpty());
 	}
 
-	public void estaciomaientoCarrosLleno() {
+	@Test
+	public void estaciomaientoCarrosLlenoTest() {
 		// Arrange
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().buildModel();
 		when(facturaVehiculoRepository.countByTipoAndFechaSalidaIsNull(EtipoVehiculo.CARRO))
@@ -135,11 +157,96 @@ public class FacturaVehiculoServiceTest {
 
 		// Act
 		try {
-			facturaVehiculoService.registrarVehiculo(facturaVehiculoModel);
+			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
 			fail();
-		} catch (NoPuedeEstacionarDiaNoHabilExcepcion ex) {
+		} catch (EstacionamientoCarrosLlenoExcepcion ex) {
 			// Assert
-			assertThat(ex.getMessage()).isEqualTo(NO_PUEDE_ESTACIONAR_DIA_NO_HABIL);
+			assertThat(ex.getMessage()).isEqualTo(MSN_ESTACIONAMIENTO_CARROS_LLENO);
 		}
 	}
+
+	@Test
+	public void estaciomaientoMotosLlenoTest() {
+		// Arrange
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().conPlaca("NIV 17E")
+				.conCilindraje(150).conMarca("YAMAHA").conModelo("2018").conTipo(EtipoVehiculo.MOTO).buildModel();
+
+		when(facturaVehiculoRepository.countByTipoAndFechaSalidaIsNull(facturaVehiculoModel.getTipo()))
+				.thenReturn(CANTIDAD_MAXIMA_MOTOS_ESTACIONADAS);
+
+		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
+
+		// Act
+		try {
+			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
+			fail();
+		} catch (EstacionamientoMotosLlenoExcepcion ex) {
+			// Assert
+			assertThat(ex.getMessage()).isEqualTo(MSN_ESTACIONAMIENTO_MOTOS_LLENO);
+		}
+	}
+
+	@Test
+	public void posicionEstacionamientoOcupadaTest() {
+		// Arrange
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().conPlaca("NIV 17E")
+				.conMarca("YAMAHA").conModelo("2018").conCilindraje(150).conTipo(EtipoVehiculo.MOTO)
+				.conPosicion(POSICION_ESTACIONAMIENTO_VEHICULO).buildModel();
+
+		when(facturaVehiculoRepository.existsByTipoAndPosicionAndFechaSalidaIsNull(facturaVehiculoModel.getTipo(),
+				facturaVehiculoModel.getPosicion())).thenReturn(true);
+
+		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
+		// Act
+		try {
+			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
+			fail();
+		} catch (PosicionEstacionamientoOcupadaExcepcion ex) {
+			// Assert
+			assertThat(ex.getMessage()).isEqualTo(MSN_POSICION_ESTACIONAMIENTO_OCUPADA);
+		}
+	}
+
+	@Test
+	public void vehiculoSeEncuentraEstacionadoTest() {
+		// Arrange
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().conPlaca("NIV 17E")
+				.conMarca("YAMAHA").conModelo("2018").conCilindraje(150).conTipo(EtipoVehiculo.MOTO)
+				.conPosicion(POSICION_ESTACIONAMIENTO_VEHICULO).buildModel();
+
+		when(facturaVehiculoRepository.existsByPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getPlaca()))
+				.thenReturn(true);
+
+		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
+
+		// Act
+		try {
+			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
+			fail();
+		} catch (VehiculoSeEncuentraEstacionadoExcepcion ex) {
+			// Assert
+			assertThat(ex.getMessage()).isEqualTo(MSN_VEHICULO_ESTA_ESTACIONADO);
+		}
+	}
+
+	@Test
+	public void vehiculoNoPuedeEstacionarPlacaIniciaEnADiaLunesTest() {
+		// Arrange
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().conPlaca("ADF 465")
+				.conFechaEntrada(FECHA_ENTRADA).buildModel();
+
+		when(localDateTimeWrapper.now()).thenReturn(facturaVehiculoModel.getFechaEntrada());
+
+		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
+
+		// Act
+		try {
+			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
+			fail();
+		} catch (NoPuedeEstacionarDiaNoHabilExcepcion ex) {
+			// assert
+			assertThat(ex.getMessage()).isEqualTo(MSN_NO_PUEDE_ESTACIONAR_DIA_NO_HABIL);
+		}
+	}
+
 }

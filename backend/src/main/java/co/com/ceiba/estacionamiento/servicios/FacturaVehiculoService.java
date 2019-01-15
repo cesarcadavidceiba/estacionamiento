@@ -21,7 +21,7 @@ public interface FacturaVehiculoService {
 	 * @param facturaVehiculoModel
 	 * @return devuelve el id generado de la factura
 	 */
-	public long registrarVehiculo(FacturaVehiculoModel facturaVehiculoModel);
+	public long estacionarVehiculo(FacturaVehiculoModel facturaVehiculoModel);
 
 	/**
 	 * 

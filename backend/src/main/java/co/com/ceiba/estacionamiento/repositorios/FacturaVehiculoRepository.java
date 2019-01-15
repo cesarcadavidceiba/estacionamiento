@@ -38,11 +38,20 @@ public interface FacturaVehiculoRepository extends JpaRepository<FacturaVehiculo
 	 * @param posicion
 	 * @return vehiculo parqueado por tipo y posicion
 	 */
-	FacturaVehiculo findByTipoAndPosicionAndFechaSalidaIsNull(EtipoVehiculo tipoVehiculo, short posicion);
+	boolean existsByTipoAndPosicionAndFechaSalidaIsNull(EtipoVehiculo tipoVehiculo, short posicion);
 
 	/**
 	 * 
 	 * Permite conocer si existe un vehiculo estacionado de acuerdo a la placa
+	 * 
+	 * @param placa
+	 * @return vehiculo parqueado por tipo y placa
+	 */
+	boolean existsByPlacaAndFechaSalidaIsNull(String placa);
+	
+	/**
+	 * 
+	 * Permite obtener un vehiculo estacionado de acuerdo a la placa
 	 * 
 	 * @param placa
 	 * @return vehiculo parqueado por tipo y placa

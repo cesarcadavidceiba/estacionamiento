@@ -84,6 +84,11 @@ public class FacturaVehiculoTestDataBuilder {
 		return this;
 	}
 
+	public FacturaVehiculoTestDataBuilder conPosicion(short posicion) {
+		this.posicion = posicion;
+		return this;
+	}
+
 	public FacturaVehiculoModel buildModel() {
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModel(this.fechaEntrada, this.placa, this.marca,
 				this.modelo, this.cilindraje, this.tipo, this.posicion);

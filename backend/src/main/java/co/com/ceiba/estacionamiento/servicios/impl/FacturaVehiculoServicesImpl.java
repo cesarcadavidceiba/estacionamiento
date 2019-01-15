@@ -9,7 +9,8 @@ import org.springframework.stereotype.Service;
 
 import co.com.ceiba.estacionamiento.entidades.FacturaVehiculo;
 import co.com.ceiba.estacionamiento.enumerados.EtipoVehiculo;
-import co.com.ceiba.estacionamiento.excepciones.NoPuedeEstacionarDiaNoHabilExcepcion;
+import co.com.ceiba.estacionamiento.excepciones.EstacionamientoCarrosLlenoExcepcion;
+import co.com.ceiba.estacionamiento.excepciones.EstacionamientoMotosLlenoExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.PosicionEstacionamientoOcupadaExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.VehiculoNoSeEncuentraEstacionadoExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.VehiculoSeEncuentraEstacionadoExcepcion;
@@ -26,6 +27,8 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 	private static final int CANTIDAD_MAXIMA_MOTOS = 10;
 
 	private FacturaVehiculoRepository facturaVehiculoRepository;
+	
+	private LocalDateTimeWrapper localDateTimeWrapper; 
 
 	public FacturaVehiculoServicesImpl(FacturaVehiculoRepository facturaVehiculoRepository) {
 		this.facturaVehiculoRepository = facturaVehiculoRepository;
@@ -46,7 +49,7 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 	}
 
 	@Override
-	public long registrarVehiculo(FacturaVehiculoModel facturaVehiculoModel) {
+	public long estacionarVehiculo(FacturaVehiculoModel facturaVehiculoModel) {
 		facturaVehiculoModel.vehiculoPuedeEstacionar();
 		facturaVehiculoModel.validarCilindrajeMotos();
 
@@ -56,32 +59,31 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 
 		if (facturaVehiculoModel.getTipo() == EtipoVehiculo.CARRO) {
 			if (cantidadVehiculosEstacionados == CANTIDAD_MAXIMA_CARROS) {
-				throw new NoPuedeEstacionarDiaNoHabilExcepcion();
+				throw new EstacionamientoCarrosLlenoExcepcion();
 			}
 		} else {
 			if (cantidadVehiculosEstacionados == CANTIDAD_MAXIMA_MOTOS) {
-				throw new NoPuedeEstacionarDiaNoHabilExcepcion();
+				throw new EstacionamientoMotosLlenoExcepcion();
 			}
 		}
 
 		// Verificar si la posicion del estacionamiento esta disponible
-		FacturaVehiculo facturaVehiculo = facturaVehiculoRepository.findByTipoAndPosicionAndFechaSalidaIsNull(
+		boolean estacionamientoOcupado = facturaVehiculoRepository.existsByTipoAndPosicionAndFechaSalidaIsNull(
 				facturaVehiculoModel.getTipo(), facturaVehiculoModel.getPosicion());
-		if (facturaVehiculo != null) {
+		if (estacionamientoOcupado) {
 			throw new PosicionEstacionamientoOcupadaExcepcion();
 		}
 
 		// Verificar que el vehiculo no se encuentre ya estacionado
-		facturaVehiculo = facturaVehiculoRepository.findByPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getPlaca());
-		if (facturaVehiculo != null) {
+		boolean vehiculoEstacionado = facturaVehiculoRepository
+				.existsByPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getPlaca());
+		if (vehiculoEstacionado) {
 			throw new VehiculoSeEncuentraEstacionadoExcepcion();
 		}
 
-		facturaVehiculo = FacturaVehiculo.convertirAEntity(facturaVehiculoModel);
+		FacturaVehiculo facturaVehiculo = FacturaVehiculo.convertirAEntity(facturaVehiculoModel);
 
-		FacturaVehiculo save = facturaVehiculoRepository.save(facturaVehiculo);
-
-		return save.getId();
+		return facturaVehiculoRepository.save(facturaVehiculo).getId();
 	}
 
 	@Override
