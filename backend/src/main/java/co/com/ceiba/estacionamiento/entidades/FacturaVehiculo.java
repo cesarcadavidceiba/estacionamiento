@@ -120,10 +120,10 @@ public class FacturaVehiculo {
 
 	public static FacturaVehiculoModel convertirAModelo(FacturaVehiculo facturaVehiculo) {
 
-		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModel(facturaVehiculo.getFechaEntrada(),
-				facturaVehiculo.getPlaca(), facturaVehiculo.getMarca(), facturaVehiculo.getModelo(),
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModel(facturaVehiculo.getPlaca(), facturaVehiculo.getMarca(), facturaVehiculo.getModelo(),
 				facturaVehiculo.getCilindraje(), facturaVehiculo.getTipo(), facturaVehiculo.getPosicion());
 
+		facturaVehiculoModel.setFechaEntrada(facturaVehiculo.getFechaEntrada());
 		facturaVehiculoModel.setFechaSalida(facturaVehiculo.getFechaSalida());
 
 		return facturaVehiculoModel;

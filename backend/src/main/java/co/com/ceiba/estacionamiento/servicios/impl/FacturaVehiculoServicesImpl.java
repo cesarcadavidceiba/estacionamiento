@@ -1,9 +1,11 @@
 package co.com.ceiba.estacionamiento.servicios.impl;
 
 import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.springframework.stereotype.Service;
 
@@ -27,33 +29,37 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 	private static final int CANTIDAD_MAXIMA_MOTOS = 10;
 
 	private FacturaVehiculoRepository facturaVehiculoRepository;
-	
-	private LocalDateTimeWrapper localDateTimeWrapper; 
 
-	public FacturaVehiculoServicesImpl(FacturaVehiculoRepository facturaVehiculoRepository) {
+	private LocalDateTimeWrapper localDateTimeWrapper;
+
+	public FacturaVehiculoServicesImpl(FacturaVehiculoRepository facturaVehiculoRepository,
+			LocalDateTimeWrapper localDateTimeWrapper) {
 		this.facturaVehiculoRepository = facturaVehiculoRepository;
+		this.localDateTimeWrapper = localDateTimeWrapper;
 	}
 
 	@Override
 	public List<FacturaVehiculoModel> cargarVehiculosEstacionados() {
 		List<FacturaVehiculo> listaVehiculosEstacionadosRepo = facturaVehiculoRepository.findAllByFechaSalidaIsNull();
-		if (listaVehiculosEstacionadosRepo != null && !listaVehiculosEstacionadosRepo.isEmpty()) {
-			List<FacturaVehiculoModel> listaVehiculosEstacionados = new ArrayList<>();
-			for (FacturaVehiculo facturaVehiculo : listaVehiculosEstacionadosRepo) {
-				listaVehiculosEstacionados.add(FacturaVehiculo.convertirAModelo(facturaVehiculo));
-			}
-			return listaVehiculosEstacionados;
-		}
-
-		return emptyList();
+		return listaVehiculosEstacionadosRepo.stream().map(FacturaVehiculo::convertirAModelo).collect(toList());
 	}
 
 	@Override
 	public long estacionarVehiculo(FacturaVehiculoModel facturaVehiculoModel) {
+		facturaVehiculoModel.setFechaEntrada(localDateTimeWrapper.now());
+
 		facturaVehiculoModel.vehiculoPuedeEstacionar();
 		facturaVehiculoModel.validarCilindrajeMotos();
 
-		// Verificar si hay estacionamiento disponible
+		verificarDisponibilidadEstacionamiento(facturaVehiculoModel);
+		verificarDisponibilidadPosicion(facturaVehiculoModel);
+		verificarVehiculoEstacionado(facturaVehiculoModel);
+
+		FacturaVehiculo facturaVehiculo = FacturaVehiculo.convertirAEntity(facturaVehiculoModel);
+		return facturaVehiculoRepository.save(facturaVehiculo).getId();
+	}
+
+	private void verificarDisponibilidadEstacionamiento(FacturaVehiculoModel facturaVehiculoModel) {
 		int cantidadVehiculosEstacionados = facturaVehiculoRepository
 				.countByTipoAndFechaSalidaIsNull(facturaVehiculoModel.getTipo());
 
@@ -66,41 +72,37 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 				throw new EstacionamientoMotosLlenoExcepcion();
 			}
 		}
+	}
 
-		// Verificar si la posicion del estacionamiento esta disponible
+	private void verificarDisponibilidadPosicion(FacturaVehiculoModel facturaVehiculoModel) {
 		boolean estacionamientoOcupado = facturaVehiculoRepository.existsByTipoAndPosicionAndFechaSalidaIsNull(
 				facturaVehiculoModel.getTipo(), facturaVehiculoModel.getPosicion());
 		if (estacionamientoOcupado) {
 			throw new PosicionEstacionamientoOcupadaExcepcion();
 		}
+	}
 
-		// Verificar que el vehiculo no se encuentre ya estacionado
+	private void verificarVehiculoEstacionado(FacturaVehiculoModel facturaVehiculoModel) {
 		boolean vehiculoEstacionado = facturaVehiculoRepository
 				.existsByPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getPlaca());
 		if (vehiculoEstacionado) {
 			throw new VehiculoSeEncuentraEstacionadoExcepcion();
 		}
-
-		FacturaVehiculo facturaVehiculo = FacturaVehiculo.convertirAEntity(facturaVehiculoModel);
-
-		return facturaVehiculoRepository.save(facturaVehiculo).getId();
 	}
 
 	@Override
-	public String darSalidaVehiculoEstacionado(String placa) {
+	public Long darSalidaVehiculoEstacionado(String placa) {
 		// Verificar que el vehiculo se encuentre estacionado
-		FacturaVehiculo facturaVehiculo = facturaVehiculoRepository.findByPlacaAndFechaSalidaIsNull(placa);
+		FacturaVehiculo facturaVehiculo = facturaVehiculoRepository.findByPlacaAndFechaSalidaIsNull(placa)
+				.orElseThrow(() -> new VehiculoNoSeEncuentraEstacionadoExcepcion());
 
-		if (facturaVehiculo == null) {
-			throw new VehiculoNoSeEncuentraEstacionadoExcepcion();
-		}
-
-		facturaVehiculo.setFechaSalida(new LocalDateTimeWrapper().now());
-		facturaVehiculoRepository.save(facturaVehiculo);
-
+		facturaVehiculo.setFechaSalida(localDateTimeWrapper.now());
 		FacturaVehiculoModel facturaVehiculoModel = FacturaVehiculo.convertirAModelo(facturaVehiculo);
-
-		return facturaVehiculoModel.obtenerValorPagar();
+		Long valorPagar = facturaVehiculoModel.obtenerValorPagar();
+		
+		facturaVehiculoRepository.save(facturaVehiculo);
+		
+		return valorPagar;
 	}
 
 }

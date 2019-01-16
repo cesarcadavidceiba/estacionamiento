@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import co.com.ceiba.estacionamiento.enumerados.EtipoVehiculo;
 import co.com.ceiba.estacionamiento.excepciones.VehiculoMotoSinCilindrajeExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.VehiculoNoPuedeIngresarExcepcion;
-import co.com.ceiba.estacionamiento.util.LocalDateTimeWrapper;
 
 public class FacturaVehiculoModel {
 
@@ -39,15 +38,13 @@ public class FacturaVehiculoModel {
 	private static final int CILINDRAJE_MAXIMO_MOTO = 500;
 	private static final int VALOR_EXTRA_MOTO = 2000;
 	private static final int SESENTA_MINUTOS = 60;
-	private static final int CERO = 0;
+	private static final int CILINDRAJE_MINIMO = 0;
 
 	@JsonCreator
-	public FacturaVehiculoModel(@JsonProperty("fechaEntrada") LocalDateTime fechaEntrada,
-			@JsonProperty("placa") String placa, @JsonProperty("marca") String marca,
+	public FacturaVehiculoModel(@JsonProperty("placa") String placa, @JsonProperty("marca") String marca,
 			@JsonProperty("modelo") String modelo, @JsonProperty("cilindraje") Integer cilindraje,
 			@JsonProperty("tipo") EtipoVehiculo tipo, @JsonProperty("posicion") short posicion) {
 		super();
-		this.fechaEntrada = fechaEntrada;
 		this.placa = placa;
 		this.marca = marca;
 		this.modelo = modelo;
@@ -59,39 +56,26 @@ public class FacturaVehiculoModel {
 	// Acciones
 	public void vehiculoPuedeEstacionar() {
 		if (placa.startsWith(PLACA_INICIA_CON_A)) {
-			DayOfWeek dayOfWeek = new LocalDateTimeWrapper().now().getDayOfWeek();
-			if (dayOfWeek != DayOfWeek.SUNDAY && dayOfWeek != DayOfWeek.MONDAY) {
+			DayOfWeek dayOfWeek = fechaEntrada.getDayOfWeek();
+			if (dayOfWeek == DayOfWeek.SUNDAY || dayOfWeek == DayOfWeek.MONDAY) {
 				throw new VehiculoNoPuedeIngresarExcepcion();
 			}
 		}
-
-		fechaEntrada = new LocalDateTimeWrapper().now();
 	}
 
 	public void validarCilindrajeMotos() {
-		if (tipo == EtipoVehiculo.MOTO && (cilindraje == null || cilindraje == CERO)) {
+		if (tipo == EtipoVehiculo.MOTO && (cilindraje == null || cilindraje == CILINDRAJE_MINIMO)) {
 			throw new VehiculoMotoSinCilindrajeExcepcion();
 		}
 	}
 
-	public long obtenerCantidadHoras() {
-		if (fechaSalida == null) {
-			return 0;
-		}
-
-		double minutos = ChronoUnit.MINUTES.between(fechaEntrada, fechaSalida);
-
-		long horas = Math.round(minutos / SESENTA_MINUTOS);
-
-		return horas == CERO ? 1 : horas;
+	private long obtenerCantidadHoras() {
+		long minutos = ChronoUnit.MINUTES.between(fechaEntrada, fechaSalida);
+		return (int) Math.ceil(minutos / SESENTA_MINUTOS);
 	}
 
-	public String obtenerValorPagar() {
-		if (fechaSalida == null) {
-			return null;
-		}
-
-		double valorCalculado = 0;
+	public Long obtenerValorPagar() {
+		Long valorCalculado = 0L;
 
 		long cantidadHoras = obtenerCantidadHoras();
 		boolean continuar = true;
@@ -117,7 +101,7 @@ public class FacturaVehiculoModel {
 			valorCalculado += VALOR_EXTRA_MOTO;
 		}
 
-		return valorCalculado + "";
+		return valorCalculado;
 	}
 
 	// Getter
@@ -128,6 +112,10 @@ public class FacturaVehiculoModel {
 
 	public LocalDateTime getFechaEntrada() {
 		return fechaEntrada;
+	}
+
+	public void setFechaEntrada(LocalDateTime fechaEntrada) {
+		this.fechaEntrada = fechaEntrada;
 	}
 
 	public LocalDateTime getFechaSalida() {

@@ -2,6 +2,7 @@ package co.com.ceiba.estacionamiento.repositorios;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -56,5 +57,5 @@ public interface FacturaVehiculoRepository extends JpaRepository<FacturaVehiculo
 	 * @param placa
 	 * @return vehiculo parqueado por tipo y placa
 	 */
-	FacturaVehiculo findByPlacaAndFechaSalidaIsNull(String placa);
+	Optional<FacturaVehiculo> findByPlacaAndFechaSalidaIsNull(String placa);
 }

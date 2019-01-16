@@ -1,23 +1,22 @@
 package co.com.ceiba.estacionamiento.test.servicios;
 
+import static java.util.Optional.empty;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -25,8 +24,10 @@ import co.com.ceiba.estacionamiento.entidades.FacturaVehiculo;
 import co.com.ceiba.estacionamiento.enumerados.EtipoVehiculo;
 import co.com.ceiba.estacionamiento.excepciones.EstacionamientoCarrosLlenoExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.EstacionamientoMotosLlenoExcepcion;
-import co.com.ceiba.estacionamiento.excepciones.NoPuedeEstacionarDiaNoHabilExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.PosicionEstacionamientoOcupadaExcepcion;
+import co.com.ceiba.estacionamiento.excepciones.VehiculoMotoSinCilindrajeExcepcion;
+import co.com.ceiba.estacionamiento.excepciones.VehiculoNoPuedeIngresarExcepcion;
+import co.com.ceiba.estacionamiento.excepciones.VehiculoNoSeEncuentraEstacionadoExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.VehiculoSeEncuentraEstacionadoExcepcion;
 import co.com.ceiba.estacionamiento.modelos.FacturaVehiculoModel;
 import co.com.ceiba.estacionamiento.repositorios.FacturaVehiculoRepository;
@@ -34,7 +35,6 @@ import co.com.ceiba.estacionamiento.servicios.FacturaVehiculoService;
 import co.com.ceiba.estacionamiento.servicios.impl.FacturaVehiculoServicesImpl;
 import co.com.ceiba.estacionamiento.test.testdatabuilder.FacturaVehiculoTestDataBuilder;
 import co.com.ceiba.estacionamiento.util.LocalDateTimeWrapper;
-import javassist.bytecode.Mnemonic;
 
 @RunWith(SpringRunner.class)
 public class FacturaVehiculoServiceTest {
@@ -43,26 +43,28 @@ public class FacturaVehiculoServiceTest {
 	private static final int CANTIDAD_MAXIMA_CARROS_ESTACIONADOS = 20;
 	private static final int CANTIDAD_MAXIMA_MOTOS_ESTACIONADAS = 10;
 	private static final short POSICION_ESTACIONAMIENTO_VEHICULO = 1;
-	private static final LocalDateTime FECHA_ENTRADA = LocalDateTime.of(2019, Month.JANUARY, 14, 8, 20);
-
-	private static final String MSN_ESTACIONAMIENTO_CARROS_LLENO = "El estacionamiento para carros se encuentra lleno";
-	private static final String MSN_ESTACIONAMIENTO_MOTOS_LLENO = "El estacionamiento para motos se encuentra lleno";
-	private static final String MSN_POSICION_ESTACIONAMIENTO_OCUPADA = "La posición del estacionamiento que solicita se encuentra ocupada";
-	private static final String MSN_VEHICULO_ESTA_ESTACIONADO = "El vehiculo ya se encuentra estacionado";
-	private static final String MSN_NO_PUEDE_ESTACIONAR_DIA_NO_HABIL = "No puede estacionar por que no esta en un día hábil";
+	private static final int CILINDRAJE_MOTO_MAYOR_500 = 650;
+	private static final int CILINDRAJE_MOTO_MENOR_500 = 150;
+	private static final LocalDateTime FECHA_ENTRADA_DOMINGO = LocalDateTime.of(2019, Month.JANUARY, 13, 8, 20);
+	private static final LocalDateTime FECHA_ENTRADA_LUNES = LocalDateTime.of(2019, Month.JANUARY, 14, 8, 20);
+	private static final LocalDateTime FECHA_ENTRADA_MARTES = LocalDateTime.of(2019, Month.JANUARY, 15, 8, 20);
 
 	@MockBean
 	private FacturaVehiculoRepository facturaVehiculoRepository;
 
 	@MockBean
-	private LocalDateTimeWrapper localDateTimeWrapper; 
-	
+	private LocalDateTimeWrapper localDateTimeWrapper;
+
+	private FacturaVehiculoService facturaVehiculoService;
+
 	@Before
 	public void setup() {
 		// Crear un build para esta entidad
 		FacturaVehiculoTestDataBuilder builder = new FacturaVehiculoTestDataBuilder().conId(1L);
 		FacturaVehiculo facturaVehiculo = builder.buildEntity();
+		facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository, localDateTimeWrapper);
 		when(facturaVehiculoRepository.save(any(FacturaVehiculo.class))).thenReturn(facturaVehiculo);
+
 	}
 
 	@Test
@@ -70,8 +72,6 @@ public class FacturaVehiculoServiceTest {
 		// Arrange
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().buildModel();
 		when(facturaVehiculoRepository.countByTipoAndFechaSalidaIsNull(facturaVehiculoModel.getTipo())).thenReturn(1);
-
-		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
 
 		// Act
 		long id = facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
@@ -86,18 +86,15 @@ public class FacturaVehiculoServiceTest {
 		FacturaVehiculoTestDataBuilder builder = new FacturaVehiculoTestDataBuilder();
 		FacturaVehiculo estacionarRenult = builder.buildEntity();
 
-		builder = new FacturaVehiculoTestDataBuilder().conPlaca("GTE 459")
-				.conFechaEntrada(LocalDateTime.of(2019, 01, 15, 9, 10)).conMarca("Mazda").conModelo("2017")
+		builder = new FacturaVehiculoTestDataBuilder().conPlaca("GTE 459").conMarca("Mazda").conModelo("2017")
 				.conTipo(EtipoVehiculo.CARRO);
 		FacturaVehiculo estacionarMazda = builder.buildEntity();
 
-		builder = new FacturaVehiculoTestDataBuilder().conPlaca("ZSD 953")
-				.conFechaEntrada(LocalDateTime.of(2019, 01, 15, 8, 30)).conMarca("Chevrolet").conModelo("2015")
+		builder = new FacturaVehiculoTestDataBuilder().conPlaca("ZSD 953").conMarca("Chevrolet").conModelo("2015")
 				.conTipo(EtipoVehiculo.CARRO);
 		FacturaVehiculo estacionarChevrolet = builder.buildEntity();
 
-		builder = new FacturaVehiculoTestDataBuilder().conPlaca("NIV 17E")
-				.conFechaEntrada(LocalDateTime.of(2019, 01, 15, 7, 10)).conMarca("YAMAHA").conModelo("2018")
+		builder = new FacturaVehiculoTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA").conModelo("2018")
 				.conCilindraje(150).conTipo(EtipoVehiculo.MOTO);
 		FacturaVehiculo estacionarMotoYahama = builder.buildEntity();
 
@@ -105,8 +102,6 @@ public class FacturaVehiculoServiceTest {
 				estacionarChevrolet, estacionarMotoYahama);
 
 		when(facturaVehiculoRepository.findAllByFechaSalidaIsNull()).thenReturn(todosVehiculosEstacinados);
-
-		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
 
 		// Act
 		List<FacturaVehiculoModel> vehiculosEstacionados = facturaVehiculoService.cargarVehiculosEstacionados();
@@ -123,22 +118,6 @@ public class FacturaVehiculoServiceTest {
 		// Arrange
 		when(facturaVehiculoRepository.findAllByFechaSalidaIsNull()).thenReturn(new ArrayList<FacturaVehiculo>());
 
-		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
-
-		// Act
-		List<FacturaVehiculoModel> listaVaciaModel = facturaVehiculoService.cargarVehiculosEstacionados();
-
-		// Assert
-		assertTrue(listaVaciaModel.isEmpty());
-	}
-
-	@Test
-	public void nohayVehiculosEstacionadosListaNullTest() {
-		// Arrange
-		when(facturaVehiculoRepository.findAllByFechaSalidaIsNull()).thenReturn(null);
-
-		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
-
 		// Act
 		List<FacturaVehiculoModel> listaVaciaModel = facturaVehiculoService.cargarVehiculosEstacionados();
 
@@ -153,15 +132,13 @@ public class FacturaVehiculoServiceTest {
 		when(facturaVehiculoRepository.countByTipoAndFechaSalidaIsNull(EtipoVehiculo.CARRO))
 				.thenReturn(CANTIDAD_MAXIMA_CARROS_ESTACIONADOS);
 
-		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
-
 		// Act
 		try {
 			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
 			fail();
 		} catch (EstacionamientoCarrosLlenoExcepcion ex) {
 			// Assert
-			assertThat(ex.getMessage()).isEqualTo(MSN_ESTACIONAMIENTO_CARROS_LLENO);
+			assertThat(ex.getMessage()).isEqualTo(EstacionamientoCarrosLlenoExcepcion.ESTACIONAMIENTO_CARROS_LLENO);
 		}
 	}
 
@@ -174,15 +151,13 @@ public class FacturaVehiculoServiceTest {
 		when(facturaVehiculoRepository.countByTipoAndFechaSalidaIsNull(facturaVehiculoModel.getTipo()))
 				.thenReturn(CANTIDAD_MAXIMA_MOTOS_ESTACIONADAS);
 
-		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
-
 		// Act
 		try {
 			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
 			fail();
 		} catch (EstacionamientoMotosLlenoExcepcion ex) {
 			// Assert
-			assertThat(ex.getMessage()).isEqualTo(MSN_ESTACIONAMIENTO_MOTOS_LLENO);
+			assertThat(ex.getMessage()).isEqualTo(EstacionamientoMotosLlenoExcepcion.ESTACIONAMIENTO_MOTOS_LLENO);
 		}
 	}
 
@@ -196,14 +171,14 @@ public class FacturaVehiculoServiceTest {
 		when(facturaVehiculoRepository.existsByTipoAndPosicionAndFechaSalidaIsNull(facturaVehiculoModel.getTipo(),
 				facturaVehiculoModel.getPosicion())).thenReturn(true);
 
-		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
 		// Act
 		try {
 			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
 			fail();
 		} catch (PosicionEstacionamientoOcupadaExcepcion ex) {
 			// Assert
-			assertThat(ex.getMessage()).isEqualTo(MSN_POSICION_ESTACIONAMIENTO_OCUPADA);
+			assertThat(ex.getMessage())
+					.isEqualTo(PosicionEstacionamientoOcupadaExcepcion.POSICION_ESTACIONAMIENTO_OCUPADA);
 		}
 	}
 
@@ -217,15 +192,13 @@ public class FacturaVehiculoServiceTest {
 		when(facturaVehiculoRepository.existsByPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getPlaca()))
 				.thenReturn(true);
 
-		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
-
 		// Act
 		try {
 			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
 			fail();
 		} catch (VehiculoSeEncuentraEstacionadoExcepcion ex) {
 			// Assert
-			assertThat(ex.getMessage()).isEqualTo(MSN_VEHICULO_ESTA_ESTACIONADO);
+			assertThat(ex.getMessage()).isEqualTo(VehiculoSeEncuentraEstacionadoExcepcion.VEHICULO_ESTA_ESTACIONADO);
 		}
 	}
 
@@ -233,20 +206,162 @@ public class FacturaVehiculoServiceTest {
 	public void vehiculoNoPuedeEstacionarPlacaIniciaEnADiaLunesTest() {
 		// Arrange
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().conPlaca("ADF 465")
-				.conFechaEntrada(FECHA_ENTRADA).buildModel();
-
-		when(localDateTimeWrapper.now()).thenReturn(facturaVehiculoModel.getFechaEntrada());
-
-		FacturaVehiculoService facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository);
+				.buildModel();
+		when(localDateTimeWrapper.now()).thenReturn(FECHA_ENTRADA_LUNES);
 
 		// Act
 		try {
 			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
 			fail();
-		} catch (NoPuedeEstacionarDiaNoHabilExcepcion ex) {
+		} catch (VehiculoNoPuedeIngresarExcepcion ex) {
 			// assert
-			assertThat(ex.getMessage()).isEqualTo(MSN_NO_PUEDE_ESTACIONAR_DIA_NO_HABIL);
+			assertThat(ex.getMessage()).isEqualTo(VehiculoNoPuedeIngresarExcepcion.VEHICULO_NOPUEDE_ESTACIONAR);
 		}
+	}
+
+	@Test
+	public void vehiculoNoPuedeEstacionarPlacaIniciaEnADiaDomingoTest() {
+		// Arrange
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().conPlaca("ADF 465")
+				.buildModel();
+		when(localDateTimeWrapper.now()).thenReturn(FECHA_ENTRADA_DOMINGO);
+
+		// Act
+		try {
+			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
+			fail();
+		} catch (VehiculoNoPuedeIngresarExcepcion ex) {
+			// assert
+			assertThat(ex.getMessage()).isEqualTo(VehiculoNoPuedeIngresarExcepcion.VEHICULO_NOPUEDE_ESTACIONAR);
+		}
+	}
+
+	@Test
+	public void vehiculoNoPuedeEstacionarPlacaIniciaEnADiaMartesTest() {
+		// Arrange
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().conPlaca("ADF 465")
+				.buildModel();
+		when(localDateTimeWrapper.now()).thenReturn(FECHA_ENTRADA_MARTES);
+
+		// Act
+		long id = facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
+
+		// Assert
+		assertTrue(id == 1L);
+	}
+
+	@Test
+	public void vehiculoNoEstaEnElEstacionamientoTest() {
+		// Arrange
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().buildModel();
+		when(facturaVehiculoRepository.findByPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getPlaca()))
+				.thenReturn(empty());
+
+		// Act
+		try {
+			facturaVehiculoService.darSalidaVehiculoEstacionado(facturaVehiculoModel.getPlaca());
+			fail();
+		} catch (VehiculoNoSeEncuentraEstacionadoExcepcion ex) {
+			// assert
+			assertThat(ex.getMessage())
+					.isEqualTo(VehiculoNoSeEncuentraEstacionadoExcepcion.VEHICULO_NO_ESTA_ESTACIONADO);
+		}
+	}
+
+	@Test
+	public void darSalidaEstacionamiento80HorasValorPagar32000() {
+		// Arrange
+		FacturaVehiculo entity = new FacturaVehiculoTestDataBuilder()
+				.conFechaEntrada(LocalDateTime.of(2019, Month.JANUARY, 1, 10, 0)).buildEntity();
+
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().buildModel();
+
+		when(facturaVehiculoRepository.findByPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getPlaca()))
+				.thenReturn(Optional.of(entity));
+
+		when(localDateTimeWrapper.now()).thenReturn(LocalDateTime.of(2019, Month.JANUARY, 4, 18, 0));
+
+		// Act
+		Long total = facturaVehiculoService.darSalidaVehiculoEstacionado(facturaVehiculoModel.getPlaca());
+
+		// Assert
+		assertThat(total).isEqualTo(32000L);
+	}
+
+	@Test
+	public void darSalidaEstacionamientoMoto8HorasCilindraje650ValorPagar6000() {
+		// Arrange
+		FacturaVehiculo entity = new FacturaVehiculoTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA")
+				.conTipo(EtipoVehiculo.MOTO).conCilindraje(CILINDRAJE_MOTO_MAYOR_500)
+				.conFechaEntrada(LocalDateTime.of(2019, Month.JANUARY, 15, 7, 0)).buildEntity();
+
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().buildModel();
+
+		when(facturaVehiculoRepository.findByPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getPlaca()))
+				.thenReturn(Optional.of(entity));
+
+		when(localDateTimeWrapper.now()).thenReturn(LocalDateTime.of(2019, Month.JANUARY, 15, 15, 0));
+
+		// Act
+		Long total = facturaVehiculoService.darSalidaVehiculoEstacionado(facturaVehiculoModel.getPlaca());
+
+		// Assert
+		assertThat(total).isEqualTo(6000L);
+	}
+
+	@Test
+	public void darSalidaEstacionamientoMoto10HorasCilindraje150ValorPagar4000() {
+		// Arrange
+		FacturaVehiculo entity = new FacturaVehiculoTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA")
+				.conTipo(EtipoVehiculo.MOTO).conCilindraje(CILINDRAJE_MOTO_MENOR_500)
+				.conFechaEntrada(LocalDateTime.of(2019, Month.JANUARY, 15, 7, 0)).buildEntity();
+
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().buildModel();
+
+		when(facturaVehiculoRepository.findByPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getPlaca()))
+				.thenReturn(Optional.of(entity));
+
+		when(localDateTimeWrapper.now()).thenReturn(LocalDateTime.of(2019, Month.JANUARY, 15, 17, 0));
+
+		// Act
+		Long total = facturaVehiculoService.darSalidaVehiculoEstacionado(facturaVehiculoModel.getPlaca());
+
+		// Assert
+		assertThat(total).isEqualTo(4000L);
+	}
+
+	@Test
+	public void ingresoMotoConCilindrajeNull() {
+		// Arrange
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().conPlaca("NIV 17E")
+				.conMarca("YAMAHA").conTipo(EtipoVehiculo.MOTO).buildModel();
+
+		// Act
+		try {
+			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
+			fail();
+		} catch (VehiculoMotoSinCilindrajeExcepcion ex) {
+			// Assert
+			assertThat(ex.getMessage()).isEqualTo(VehiculoMotoSinCilindrajeExcepcion.VEHICULO_MOTO_SIN_CILINDRAJE);
+		}
+
+	}
+
+	@Test
+	public void ingresoMotoConCilindrajeCero() {
+		// Arrange
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoTestDataBuilder().conPlaca("NIV 17E")
+				.conCilindraje(0).conMarca("YAMAHA").conTipo(EtipoVehiculo.MOTO).buildModel();
+
+		// Act
+		try {
+			facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
+			fail();
+		} catch (VehiculoMotoSinCilindrajeExcepcion ex) {
+			// Assert
+			assertThat(ex.getMessage()).isEqualTo(VehiculoMotoSinCilindrajeExcepcion.VEHICULO_MOTO_SIN_CILINDRAJE);
+		}
+
 	}
 
 }

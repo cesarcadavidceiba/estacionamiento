@@ -8,7 +8,6 @@ import co.com.ceiba.estacionamiento.modelos.FacturaVehiculoModel;
 
 public class FacturaVehiculoTestDataBuilder {
 	// Constantes
-	private static final LocalDateTime FECHA_ENTRADA = LocalDateTime.now();
 	private static final EtipoVehiculo TIPO = EtipoVehiculo.CARRO;
 	private static final String PLACA = "DUX 258";
 	private static final String MARCA = "RENAULD";
@@ -36,7 +35,6 @@ public class FacturaVehiculoTestDataBuilder {
 	private short posicion;
 
 	public FacturaVehiculoTestDataBuilder() {
-		this.fechaEntrada = FECHA_ENTRADA;
 		this.placa = PLACA;
 		this.tipo = TIPO;
 		this.marca = MARCA;
@@ -48,14 +46,14 @@ public class FacturaVehiculoTestDataBuilder {
 		this.id = id;
 		return this;
 	}
-
-	public FacturaVehiculoTestDataBuilder conFechaEntrada(LocalDateTime fechaEntrada) {
-		this.fechaEntrada = fechaEntrada;
+	
+	public FacturaVehiculoTestDataBuilder conFechaSalida(LocalDateTime fechaSalida) {
+		this.fechaSalida = fechaSalida;
 		return this;
 	}
 
-	public FacturaVehiculoTestDataBuilder conFechaSalida(LocalDateTime fechaSalida) {
-		this.fechaSalida = fechaSalida;
+	public FacturaVehiculoTestDataBuilder conFechaEntrada(LocalDateTime fechaEntrada) {
+		this.fechaEntrada = fechaEntrada;
 		return this;
 	}
 
@@ -90,7 +88,7 @@ public class FacturaVehiculoTestDataBuilder {
 	}
 
 	public FacturaVehiculoModel buildModel() {
-		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModel(this.fechaEntrada, this.placa, this.marca,
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModel(this.placa, this.marca,
 				this.modelo, this.cilindraje, this.tipo, this.posicion);
 		facturaVehiculoModel.setFechaSalida(this.fechaSalida);
 		return facturaVehiculoModel;
@@ -100,6 +98,7 @@ public class FacturaVehiculoTestDataBuilder {
 		FacturaVehiculo facturaVehiculo = new FacturaVehiculo(this.fechaEntrada, this.placa, this.marca, this.modelo,
 				this.cilindraje, this.tipo, this.posicion);
 		facturaVehiculo.setId(this.id);
+		
 		return facturaVehiculo;
 	}
 

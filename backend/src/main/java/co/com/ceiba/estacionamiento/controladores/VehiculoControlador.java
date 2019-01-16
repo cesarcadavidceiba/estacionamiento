@@ -29,7 +29,7 @@ public class VehiculoControlador {
 	}
 
 	@PutMapping("/vehiculos/{placa}")
-	public String darSalidaVehiculoEstacionado(@PathVariable String placa) {
+	public Long darSalidaVehiculoEstacionado(@PathVariable String placa) {
 		return facturaVehiculoService.darSalidaVehiculoEstacionado(placa);
 	}
 

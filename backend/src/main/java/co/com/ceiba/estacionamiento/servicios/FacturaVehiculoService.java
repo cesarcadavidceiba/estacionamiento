@@ -30,5 +30,5 @@ public interface FacturaVehiculoService {
 	 * @param placa
 	 * @return Valor a pagar por el cliente
 	 */
-	public String darSalidaVehiculoEstacionado(String placa);
+	public Long darSalidaVehiculoEstacionado(String placa);
 }
