@@ -1,5 +1,6 @@
 package co.com.ceiba.estacionamiento.test.controlador;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
@@ -105,6 +106,8 @@ public class VehiculoContraladorTest {
 		mvc.perform(post("/api/vehiculos").accept(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsBytes(estacionarCarro)).contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andDo(print());
+
+		estacionarCarro.getPlaca();
 	}
 
 	@Test
@@ -126,7 +129,7 @@ public class VehiculoContraladorTest {
 
 		// Act
 		mvc.perform(put("/api/vehiculos/" + estacionarCarro.getPlaca()).contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk()).andDo(print());
+				.andExpect(status().isOk()).andExpect(jsonPath("$", is((int) valorCobrar))).andDo(print());
 	}
 
 }

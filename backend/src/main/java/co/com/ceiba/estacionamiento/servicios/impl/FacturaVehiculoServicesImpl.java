@@ -91,7 +91,7 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 	}
 
 	@Override
-	public Long darSalidaVehiculoEstacionado(String placa) {
+	public long darSalidaVehiculoEstacionado(String placa) {
 		// Verificar que el vehiculo se encuentre estacionado
 		FacturaVehiculo facturaVehiculo = facturaVehiculoRepository.findByPlacaAndFechaSalidaIsNull(placa)
 				.orElseThrow(() -> new VehiculoNoSeEncuentraEstacionadoExcepcion());
