@@ -8,26 +8,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import co.com.ceiba.estacionamiento.enumerados.EtipoVehiculo;
-import co.com.ceiba.estacionamiento.excepciones.VehiculoMotoSinCilindrajeExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.VehiculoNoPuedeIngresarExcepcion;
 
 public class FacturaVehiculoModel {
 
 	private long idFactura;
 
+	private VehiculoModel vehiculo;
+
 	private LocalDateTime fechaEntrada;
 
 	private LocalDateTime fechaSalida;
-
-	private String placa;
-
-	private String marca;
-
-	private String modelo;
-
-	private Integer cilindraje;
-
-	private EtipoVehiculo tipo;
 
 	private short posicion;
 
@@ -38,34 +29,22 @@ public class FacturaVehiculoModel {
 	private static final int CILINDRAJE_MAXIMO_MOTO = 500;
 	private static final int VALOR_EXTRA_MOTO = 2000;
 	private static final int SESENTA_MINUTOS = 60;
-	private static final int CILINDRAJE_MINIMO = 0;
 
 	@JsonCreator
-	public FacturaVehiculoModel(@JsonProperty("placa") String placa, @JsonProperty("marca") String marca,
-			@JsonProperty("modelo") String modelo, @JsonProperty("cilindraje") Integer cilindraje,
-			@JsonProperty("tipo") EtipoVehiculo tipo, @JsonProperty("posicion") short posicion) {
+	public FacturaVehiculoModel(@JsonProperty("vehiculo") VehiculoModel vehiculo,
+			@JsonProperty("posicion") short posicion) {
 		super();
-		this.placa = placa;
-		this.marca = marca;
-		this.modelo = modelo;
-		this.cilindraje = cilindraje;
-		this.tipo = tipo;
+		this.vehiculo = vehiculo;
 		this.posicion = posicion;
 	}
 
 	// Acciones
 	public void vehiculoPuedeEstacionar() {
-		if (placa.startsWith(PLACA_INICIA_CON_A)) {
+		if (vehiculo.getPlaca().startsWith(PLACA_INICIA_CON_A)) {
 			DayOfWeek dayOfWeek = fechaEntrada.getDayOfWeek();
 			if (dayOfWeek == DayOfWeek.SUNDAY || dayOfWeek == DayOfWeek.MONDAY) {
 				throw new VehiculoNoPuedeIngresarExcepcion();
 			}
-		}
-	}
-
-	public void validarCilindrajeMotos() {
-		if (tipo == EtipoVehiculo.MOTO && (cilindraje == null || cilindraje == CILINDRAJE_MINIMO)) {
-			throw new VehiculoMotoSinCilindrajeExcepcion();
 		}
 	}
 
@@ -84,20 +63,20 @@ public class FacturaVehiculoModel {
 
 		while (continuar) {
 			if (horasRestantes > VEINTICUATRO_HORAS) {
-				valorCalculado += tipo.getValorDia();
+				valorCalculado += vehiculo.getTipo().getValorDia();
 				horasRestantes = horasRestantes - VEINTICUATRO_HORAS;
 			} else {
 				if (horasRestantes > NUEVE_HORAS) {
 					// Se cobra el dia
-					valorCalculado += tipo.getValorDia();
+					valorCalculado += vehiculo.getTipo().getValorDia();
 				} else {
-					valorCalculado += tipo.getValorHora() * horasRestantes;
+					valorCalculado += vehiculo.getTipo().getValorHora() * horasRestantes;
 				}
 				continuar = false;
 			}
 		}
 
-		if (tipo == EtipoVehiculo.MOTO && cilindraje > CILINDRAJE_MAXIMO_MOTO) {
+		if (vehiculo.getTipo() == EtipoVehiculo.MOTO && vehiculo.getCilindraje() > CILINDRAJE_MAXIMO_MOTO) {
 			valorCalculado += VALOR_EXTRA_MOTO;
 		}
 
@@ -122,24 +101,8 @@ public class FacturaVehiculoModel {
 		return fechaSalida;
 	}
 
-	public String getPlaca() {
-		return placa;
-	}
-
-	public String getMarca() {
-		return marca;
-	}
-
-	public String getModelo() {
-		return modelo;
-	}
-
-	public Integer getCilindraje() {
-		return cilindraje;
-	}
-
-	public EtipoVehiculo getTipo() {
-		return tipo;
+	public VehiculoModel getVehiculo() {
+		return vehiculo;
 	}
 
 	public short getPosicion() {
@@ -151,5 +114,4 @@ public class FacturaVehiculoModel {
 	public void setFechaSalida(LocalDateTime fechaSalida) {
 		this.fechaSalida = fechaSalida;
 	}
-
 }

@@ -28,7 +28,7 @@ public interface FacturaVehiculoRepository extends JpaRepository<FacturaVehiculo
 	 * @param tipoVehiculo
 	 * @return cantidad de vehiculos parqueados por tipo
 	 */
-	int countByTipoAndFechaSalidaIsNull(EtipoVehiculo tipoVehiculo);
+	int countByVehiculoTipoAndFechaSalidaIsNull(EtipoVehiculo tipoVehiculo);
 
 	/**
 	 * 
@@ -39,7 +39,7 @@ public interface FacturaVehiculoRepository extends JpaRepository<FacturaVehiculo
 	 * @param posicion
 	 * @return vehiculo parqueado por tipo y posicion
 	 */
-	boolean existsByTipoAndPosicionAndFechaSalidaIsNull(EtipoVehiculo tipoVehiculo, short posicion);
+	boolean existsByVehiculoTipoAndPosicionAndFechaSalidaIsNull(EtipoVehiculo tipoVehiculo, short posicion);
 
 	/**
 	 * 
@@ -48,7 +48,7 @@ public interface FacturaVehiculoRepository extends JpaRepository<FacturaVehiculo
 	 * @param placa
 	 * @return vehiculo parqueado por tipo y placa
 	 */
-	boolean existsByPlacaAndFechaSalidaIsNull(String placa);
+	boolean existsByVehiculoPlacaAndFechaSalidaIsNull(String placa);
 	
 	/**
 	 * 
@@ -57,5 +57,5 @@ public interface FacturaVehiculoRepository extends JpaRepository<FacturaVehiculo
 	 * @param placa
 	 * @return vehiculo parqueado por tipo y placa
 	 */
-	Optional<FacturaVehiculo> findByPlacaAndFechaSalidaIsNull(String placa);
+	Optional<FacturaVehiculo> findByVehiculoPlacaAndFechaSalidaIsNull(String placa);
 }

@@ -3,16 +3,15 @@ package co.com.ceiba.estacionamiento.entidades;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import co.com.ceiba.estacionamiento.enumerados.EtipoVehiculo;
 import co.com.ceiba.estacionamiento.modelos.FacturaVehiculoModel;
+import co.com.ceiba.estacionamiento.modelos.VehiculoModel;
 
 @Entity
 @Table(name = "factura_vehiculo")
@@ -23,27 +22,14 @@ public class FacturaVehiculo {
 	@Column(name = "id")
 	private long id;
 
+	@Embedded
+	private Vehiculo vehiculo;
+
 	@Column(name = "fechaEntrada", nullable = false)
 	private LocalDateTime fechaEntrada;
 
 	@Column(name = "fechaSalida")
 	private LocalDateTime fechaSalida;
-
-	@Column(name = "placa", nullable = false)
-	private String placa;
-
-	@Column(name = "marca", nullable = false)
-	private String marca;
-
-	@Column(name = "modelo", nullable = false)
-	private String modelo;
-
-	@Column(name = "cilindraje")
-	private Integer cilindraje;
-
-	@Column(name = "tipo", nullable = false)
-	@Enumerated(EnumType.ORDINAL)
-	private EtipoVehiculo tipo;
 
 	@Column(name = "posicion", nullable = false)
 	private short posicion;
@@ -52,19 +38,17 @@ public class FacturaVehiculo {
 
 	}
 
-	public FacturaVehiculo(LocalDateTime fechaEntrada, String placa, String marca, String modelo, Integer cilindraje,
-			EtipoVehiculo tipo, short posicion) {
+	public FacturaVehiculo(LocalDateTime fechaEntrada, Vehiculo vehiculo, short posicion) {
 		super();
+		this.vehiculo = vehiculo;
 		this.fechaEntrada = fechaEntrada;
-		this.placa = placa;
-		this.marca = marca;
-		this.modelo = modelo;
-		this.cilindraje = cilindraje;
-		this.tipo = tipo;
 		this.posicion = posicion;
 	}
 
 	// Getter
+	public Vehiculo getVehiculo() {
+		return vehiculo;
+	}
 
 	public LocalDateTime getFechaEntrada() {
 		return fechaEntrada;
@@ -73,33 +57,13 @@ public class FacturaVehiculo {
 	public long getId() {
 		return id;
 	}
-	
+
 	public void setId(long id) {
 		this.id = id;
 	}
 
 	public LocalDateTime getFechaSalida() {
 		return fechaSalida;
-	}
-
-	public String getPlaca() {
-		return placa;
-	}
-
-	public String getMarca() {
-		return marca;
-	}
-
-	public String getModelo() {
-		return modelo;
-	}
-
-	public Integer getCilindraje() {
-		return cilindraje;
-	}
-
-	public EtipoVehiculo getTipo() {
-		return tipo;
 	}
 
 	public short getPosicion() {
@@ -113,15 +77,22 @@ public class FacturaVehiculo {
 	}
 
 	public static FacturaVehiculo convertirAEntity(FacturaVehiculoModel facturaVehiculoModel) {
-		return new FacturaVehiculo(facturaVehiculoModel.getFechaEntrada(), facturaVehiculoModel.getPlaca(),
-				facturaVehiculoModel.getMarca(), facturaVehiculoModel.getModelo(), facturaVehiculoModel.getCilindraje(),
-				facturaVehiculoModel.getTipo(), facturaVehiculoModel.getPosicion());
+
+		Vehiculo vehiculo = new Vehiculo(facturaVehiculoModel.getVehiculo().getPlaca(),
+				facturaVehiculoModel.getVehiculo().getMarca(), facturaVehiculoModel.getVehiculo().getModelo(),
+				facturaVehiculoModel.getVehiculo().getTipo());
+
+		return new FacturaVehiculo(facturaVehiculoModel.getFechaEntrada(), vehiculo,
+				facturaVehiculoModel.getPosicion());
 	}
 
 	public static FacturaVehiculoModel convertirAModelo(FacturaVehiculo facturaVehiculo) {
 
-		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModel(facturaVehiculo.getPlaca(), facturaVehiculo.getMarca(), facturaVehiculo.getModelo(),
-				facturaVehiculo.getCilindraje(), facturaVehiculo.getTipo(), facturaVehiculo.getPosicion());
+		VehiculoModel vehiculo = new VehiculoModel(facturaVehiculo.getVehiculo().getPlaca(),
+				facturaVehiculo.getVehiculo().getMarca(), facturaVehiculo.getVehiculo().getModelo(),
+				facturaVehiculo.getVehiculo().getCilindraje(), facturaVehiculo.getVehiculo().getTipo());
+
+		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModel(vehiculo, facturaVehiculo.getPosicion());
 
 		facturaVehiculoModel.setFechaEntrada(facturaVehiculo.getFechaEntrada());
 		facturaVehiculoModel.setFechaSalida(facturaVehiculo.getFechaSalida());
