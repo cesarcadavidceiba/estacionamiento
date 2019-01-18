@@ -42,7 +42,7 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 	}
 
 	@Override
-	public long estacionarVehiculo(FacturaVehiculoModel facturaVehiculoModel) {
+	public FacturaVehiculoModel estacionarVehiculo(FacturaVehiculoModel facturaVehiculoModel) {
 		facturaVehiculoModel.setFechaEntrada(localDateTimeWrapper.now());
 
 		facturaVehiculoModel.vehiculoPuedeEstacionar();
@@ -52,7 +52,11 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 		verificarVehiculoEstacionado(facturaVehiculoModel);
 
 		FacturaVehiculo facturaVehiculo = FacturaVehiculo.convertirAEntity(facturaVehiculoModel);
-		return facturaVehiculoRepository.save(facturaVehiculo).getId();
+		facturaVehiculo = facturaVehiculoRepository.save(facturaVehiculo);
+
+		facturaVehiculoModel.setId(facturaVehiculo.getId());
+
+		return facturaVehiculoModel;
 	}
 
 	private void verificarDisponibilidadEstacionamiento(FacturaVehiculoModel facturaVehiculoModel) {

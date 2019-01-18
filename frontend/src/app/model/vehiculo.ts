@@ -4,4 +4,5 @@ export class Vehiculo {
   public marca: string;
   public modelo: string;
   public tipo: number;
+  public cilindraje: number;
 }

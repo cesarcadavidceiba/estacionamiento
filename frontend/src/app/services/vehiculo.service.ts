@@ -9,12 +9,12 @@ export class VehiculoService {
   constructor(private httpClient: HttpClient) {
   }
 
-  public consultarVehiculos(): Observable<FacturaVehiculo[]> {
+  public vehiculosEstacionados(): Observable<FacturaVehiculo[]> {
     return this.httpClient.get<FacturaVehiculo[]>('/api/vehiculos');
   }
 
-  public estacionarVehiculo(facturaVehiculo: FacturaVehiculo): Observable<number> {
-    return this.httpClient.post<number>('/api/vehiculos', facturaVehiculo);
+  public estacionarVehiculo(facturaVehiculo: FacturaVehiculo): Observable<FacturaVehiculo> {
+    return this.httpClient.post<FacturaVehiculo>('/api/vehiculos', facturaVehiculo);
   }
 
   public darSalidaVehiculo(placa: String): Observable<number> {

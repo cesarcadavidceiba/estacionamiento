@@ -101,13 +101,12 @@ public class VehiculoContraladorTest {
 	@Test
 	public void estacionarVehiculoTest() throws JsonProcessingException, Exception {
 		// Arrange
-		final long ID = 1L;
 		final LocalDateTime FECHA_ENTRADA = LocalDateTime.of(2019, Month.JANUARY, 1, 7, 0);
 		FacturaVehiculoModel estacionarCarro = new FacturaVehiculoModelTestDataBuilder().build();
 
 		when(localDateTimeWrapper.now()).thenReturn(FECHA_ENTRADA);
 
-		given(facturaVehiculoService.estacionarVehiculo(estacionarCarro)).willReturn(ID);
+		given(facturaVehiculoService.estacionarVehiculo(estacionarCarro)).willReturn(estacionarCarro);
 
 		// Act
 		mvc.perform(post("/api/vehiculos").accept(MediaType.APPLICATION_JSON)

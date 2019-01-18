@@ -81,6 +81,8 @@ public class FacturaVehiculo {
 		Vehiculo vehiculo = new Vehiculo(facturaVehiculoModel.getVehiculo().getPlaca(),
 				facturaVehiculoModel.getVehiculo().getMarca(), facturaVehiculoModel.getVehiculo().getModelo(),
 				facturaVehiculoModel.getVehiculo().getTipo());
+		
+		vehiculo.setCilindraje(facturaVehiculoModel.getVehiculo().getCilindraje());
 
 		return new FacturaVehiculo(facturaVehiculoModel.getFechaEntrada(), vehiculo,
 				facturaVehiculoModel.getPosicion());

@@ -73,14 +73,14 @@ public class FacturaVehiculoServiceTest {
 	public void registrarVehiculoTest() {
 		// Arrange
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModelTestDataBuilder().build();
-		when(facturaVehiculoRepository.countByVehiculoTipoAndFechaSalidaIsNull(facturaVehiculoModel.getVehiculo().getTipo()))
-				.thenReturn(1);
+		when(facturaVehiculoRepository
+				.countByVehiculoTipoAndFechaSalidaIsNull(facturaVehiculoModel.getVehiculo().getTipo())).thenReturn(1);
 
 		// Act
-		long id = facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
+		FacturaVehiculoModel model = facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
 
 		// Assert
-		assertThat(id).isEqualTo(1L);
+		assertThat(model.getId()).isEqualTo(1L);
 	}
 
 	@Test
@@ -198,7 +198,8 @@ public class FacturaVehiculoServiceTest {
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModelTestDataBuilder().conVehiculo(vehiculoModel)
 				.conPosicion(POSICION_ESTACIONAMIENTO_VEHICULO).build();
 
-		when(facturaVehiculoRepository.existsByVehiculoPlacaAndFechaSalidaIsNull(vehiculoModel.getPlaca())).thenReturn(true);
+		when(facturaVehiculoRepository.existsByVehiculoPlacaAndFechaSalidaIsNull(vehiculoModel.getPlaca()))
+				.thenReturn(true);
 
 		// Act
 		try {
@@ -255,18 +256,19 @@ public class FacturaVehiculoServiceTest {
 		when(localDateTimeWrapper.now()).thenReturn(FECHA_ENTRADA_MARTES);
 
 		// Act
-		long id = facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
+		FacturaVehiculoModel model = facturaVehiculoService.estacionarVehiculo(facturaVehiculoModel);
 
 		// Assert
-		assertTrue(id == 1L);
+		assertTrue(model.getId() == 1L);
 	}
 
 	@Test
 	public void vehiculoNoEstaEnElEstacionamientoTest() {
 		// Arrange
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModelTestDataBuilder().build();
-		when(facturaVehiculoRepository.findByVehiculoPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getVehiculo().getPlaca()))
-				.thenReturn(empty());
+		when(facturaVehiculoRepository
+				.findByVehiculoPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getVehiculo().getPlaca()))
+						.thenReturn(empty());
 
 		// Act
 		try {
@@ -289,8 +291,9 @@ public class FacturaVehiculoServiceTest {
 
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModelTestDataBuilder().build();
 
-		when(facturaVehiculoRepository.findByVehiculoPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getVehiculo().getPlaca()))
-				.thenReturn(Optional.of(entity));
+		when(facturaVehiculoRepository
+				.findByVehiculoPlacaAndFechaSalidaIsNull(facturaVehiculoModel.getVehiculo().getPlaca()))
+						.thenReturn(Optional.of(entity));
 
 		when(localDateTimeWrapper.now()).thenReturn(FECHA_FINAL);
 
@@ -367,8 +370,8 @@ public class FacturaVehiculoServiceTest {
 	@Test
 	public void ingresoMotoConCilindrajeCero() {
 		// Arrange
-		VehiculoModelTestDataBuilder vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conCilindraje(0)
-				.conMarca("YAMAHA").conTipo(EtipoVehiculo.MOTO);
+		VehiculoModelTestDataBuilder vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E")
+				.conCilindraje(0).conMarca("YAMAHA").conTipo(EtipoVehiculo.MOTO);
 
 		// Act
 		try {

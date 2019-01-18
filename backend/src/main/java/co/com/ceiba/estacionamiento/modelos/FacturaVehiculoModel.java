@@ -12,7 +12,7 @@ import co.com.ceiba.estacionamiento.excepciones.VehiculoNoPuedeIngresarExcepcion
 
 public class FacturaVehiculoModel {
 
-	private long idFactura;
+	private long id;
 
 	private VehiculoModel vehiculo;
 
@@ -85,8 +85,8 @@ public class FacturaVehiculoModel {
 
 	// Getter
 
-	public long getIdFactura() {
-		return idFactura;
+	public long getId() {
+		return id;
 	}
 
 	public LocalDateTime getFechaEntrada() {
@@ -110,6 +110,10 @@ public class FacturaVehiculoModel {
 	}
 
 	// Setter
+
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	public void setFechaSalida(LocalDateTime fechaSalida) {
 		this.fechaSalida = fechaSalida;
