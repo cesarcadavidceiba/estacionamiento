@@ -13,4 +13,11 @@ export class VehiculoService {
     return this.httpClient.get<FacturaVehiculo[]>('/api/vehiculos');
   }
 
+  public estacionarVehiculo(facturaVehiculo: FacturaVehiculo): Observable<number> {
+    return this.httpClient.post<number>('/api/vehiculos', facturaVehiculo);
+  }
+
+  public darSalidaVehiculo(placa: String): Observable<number> {
+    return this.httpClient.put<number>('/api/vehiculos/' + placa, {});
+  }
 }

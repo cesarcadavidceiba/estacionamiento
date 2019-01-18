@@ -1,25 +1,87 @@
-<div class="row">
-  <div class="col-md-12">
-    <button class="btn btn-primary">Ingresar</button>
+<div class="card mt-5">
+  <div class="card-header">
+    <h5 class="card-title">Carros</h5>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive-lg">
+      <table class="table">
+        <thead class="thead-dark">
+          <tr class="text-center">
+            <th>Posición</th>
+            <th>Placa</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Fecha Ingreso</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let entry of facturaVehiculos | keyvalue" class="text-center">
+            <td>{{entry.key}}</td>
+            <td>{{entry.value.vehiculo.placa}}</td>
+            <td>{{entry.value.vehiculo.marca}}</td>
+            <td>{{entry.value.vehiculo.modelo}}</td>
+            <td>{{entry.value.fechaEntrada | date : 'dd/MM/yyyy hh:mm a'}}</td>
+            <td>
+              <button *ngIf="entry.value.vehiculo.placa == null" class="btn btn-primary" data-target="#registrarModal"
+                data-toggle="modal" (click)="ingresar(entry.key, 0)"><i class="fas fa-sign-in-alt"></i></button>
+              <button *ngIf="entry.value.vehiculo.placa" class="btn btn-danger" data-target="#valorPagarModal"
+                data-toggle="modal" (click)="salir(entry.key)"><i class="fas fa-sign-out-alt"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
-<div class="row">
-  <div class="col-md-12">
-    <table class="table  table-dark">
-      <thead>
-        <tr>
-          <th>Posición</th>
-          <th>Fecha Ingreso</th>
-          <th>Placa</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let facturaVehiculo of facturaVehiculos">
-          <td>{{facturaVehiculo.posicion}}</td>
-          <td>{{facturaVehiculo.fechaEntrada}}</td>
-          <td>{{facturaVehiculo.vehiculo.placa}}</td>
-        </tr>
-      </tbody>
-    </table>
+
+<!-- The Modal -->
+<div class="modal" id="registrarModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form (submit)="registrarVehiculo()" #f="ngForm" novalidate>
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Registrar Vehículo</h4>
+          <button type="button" class="close" data-dismiss="modal" #closeBtn>&times;</button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label for="txtPlaca">Placa</label>
+            <input type="text" class="form-control" id="txtPlaca" name="placa" autocomplete="off" [(ngModel)]="facturaVehiucloSeleccionado.vehiculo.placa">
+          </div>
+
+          <div class="form-group">
+            <label for="txtMarca">Marca</label>
+            <input type="text" class="form-control" id="txtMarca" name="marca" autocomplete="off" [(ngModel)]="facturaVehiucloSeleccionado.vehiculo.marca">
+          </div>
+
+          <div class="form-group">
+            <label for="txtModelo">Modelo</label>
+            <input type="text" class="form-control" id="txtModelo" name="modelo" autocomplete="off" maxlength="4"
+              [(ngModel)]="facturaVehiucloSeleccionado.vehiculo.modelo">
+          </div>
+        </div>
+
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="submit" [disabled]="f.invalid" class="btn btn-primary">Enviar</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Valor Total -->
+<div class="modal" id="valorPagarModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- <input type="text" [(ngModel)]="valorPagar" readonly="true"> -->
+      {{valorPagar}}
+    </div>
   </div>
 </div>

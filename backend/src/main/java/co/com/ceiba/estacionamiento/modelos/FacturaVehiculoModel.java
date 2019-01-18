@@ -28,7 +28,7 @@ public class FacturaVehiculoModel {
 	private static final int VEINTICUATRO_HORAS = 24;
 	private static final int CILINDRAJE_MAXIMO_MOTO = 500;
 	private static final int VALOR_EXTRA_MOTO = 2000;
-	private static final int SESENTA_MINUTOS = 60;
+	private static final double SESENTA_MINUTOS = 60;
 
 	@JsonCreator
 	public FacturaVehiculoModel(@JsonProperty("vehiculo") VehiculoModel vehiculo,
