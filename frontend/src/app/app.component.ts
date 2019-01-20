@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-
+import { ToastrService } from 'ngx-toastr';
 import { VehiculoService } from './services/vehiculo.service';
 import { FacturaVehiculo } from './model/factura-vehiculo';
 
@@ -23,7 +23,7 @@ export class AppComponent implements OnInit {
 
   @ViewChild('closeBtn') private closeBtn: ElementRef;
 
-  constructor(private vehiculoService: VehiculoService) {
+  constructor(private vehiculoService: VehiculoService, private toastr: ToastrService) {
     this.carrosEstacionados = new Map<number, FacturaVehiculo>();
     this.motosEstacionadas = new Map<number, FacturaVehiculo>();
     this.vehiculoSeleccionado = new FacturaVehiculo();
@@ -91,8 +91,7 @@ export class AppComponent implements OnInit {
   }
 
   public navegarTabVehiculos(tipoVehiculo: number): void {
-    console.log(tipoVehiculo);
-    this.pintarTablaCarros = tipoVehiculo === 0 ? true : false;
+    this.pintarTablaCarros = tipoVehiculo === 0;
     this.cambiarEstiloTabCarro = this.pintarTablaCarros ? 'active' : '';
     this.cambiarEstiloTabMoto = !this.pintarTablaCarros ? 'active' : '';
   }

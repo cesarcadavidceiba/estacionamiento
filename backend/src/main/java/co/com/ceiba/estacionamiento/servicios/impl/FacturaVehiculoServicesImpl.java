@@ -43,6 +43,8 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 
 	@Override
 	public FacturaVehiculoModel estacionarVehiculo(FacturaVehiculoModel facturaVehiculoModel) {
+		facturaVehiculoModel.getVehiculo().validarCilindrajeMotos();
+		
 		facturaVehiculoModel.setFechaEntrada(localDateTimeWrapper.now());
 
 		facturaVehiculoModel.vehiculoPuedeEstacionar();

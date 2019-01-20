@@ -353,12 +353,14 @@ public class FacturaVehiculoServiceTest {
 	@Test
 	public void ingresoMotoConCilindrajeNull() {
 		// Arrange
-		VehiculoModelTestDataBuilder builder = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA")
-				.conTipo(EtipoVehiculo.MOTO);
+		VehiculoModel vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA")
+				.conTipo(EtipoVehiculo.MOTO).build();
+		FacturaVehiculoModel FacturaVehiculoModel = new FacturaVehiculoModelTestDataBuilder().conVehiculo(vehiculoModel)
+				.build();
 
 		// Act
 		try {
-			builder.build();
+			facturaVehiculoService.estacionarVehiculo(FacturaVehiculoModel);
 			fail();
 		} catch (VehiculoMotoSinCilindrajeExcepcion ex) {
 			// Assert
@@ -370,12 +372,14 @@ public class FacturaVehiculoServiceTest {
 	@Test
 	public void ingresoMotoConCilindrajeCero() {
 		// Arrange
-		VehiculoModelTestDataBuilder vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E")
-				.conCilindraje(0).conMarca("YAMAHA").conTipo(EtipoVehiculo.MOTO);
-
+		final int CILINDRAJE_CERO = 0;
+		VehiculoModel vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA")
+				.conCilindraje(CILINDRAJE_CERO).conTipo(EtipoVehiculo.MOTO).build();
+		FacturaVehiculoModel FacturaVehiculoModel = new FacturaVehiculoModelTestDataBuilder().conVehiculo(vehiculoModel)
+				.build();
 		// Act
 		try {
-			vehiculoModel.build();
+			facturaVehiculoService.estacionarVehiculo(FacturaVehiculoModel);
 			fail();
 		} catch (VehiculoMotoSinCilindrajeExcepcion ex) {
 			// Assert

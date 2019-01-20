@@ -1,20 +1,18 @@
 <div class="card mt-5">
-  <div class="card-header">
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-        <a [ngClass]="['nav-link', cambiarEstiloTabCarro]" (click)="navegarTabVehiculos(0)" href="#">Carros</a>
-      </li>
-      <li class="nav-item">
-        <a [ngClass]="['nav-link', cambiarEstiloTabMoto]" (click)="navegarTabVehiculos(1)" href="#">Motos</a>
-      </li>
-    </ul>
-  </div>
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a [ngClass]="['nav-link', cambiarEstiloTabCarro]" (click)="navegarTabVehiculos(0)" href="#">Carros</a>
+    </li>
+    <li class="nav-item">
+      <a [ngClass]="['nav-link', cambiarEstiloTabMoto]" (click)="navegarTabVehiculos(1)" href="#">Motos</a>
+    </li>
+  </ul>
   <div class="card-body">
     <section *ngIf="pintarTablaCarros; else tablaMotos">
-      <div class="table-responsive-lg">
-        <table class="table">
-          <thead class="thead-dark">
-            <tr class="text-center">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr class="bg-dark text-white text-center">
               <th>Posición</th>
               <th>Placa</th>
               <th>Marca</th>
@@ -44,16 +42,14 @@
     <ng-template #tablaMotos>
       <div class="table-responsive-lg">
         <table class="table">
-          <thead class="thead-dark">
-            <tr class="text-center">
-              <th>Posición</th>
-              <th>Placa</th>
-              <th>Marca</th>
-              <th>Modelo</th>
-              <th>Cilindraje</th>
-              <th>Fecha Ingreso</th>
-              <th>Acciones</th>
-            </tr>
+          <thead class="bg-dark text-white text-center">
+            <th>Posición</th>
+            <th>Placa</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Cilindraje</th>
+            <th>Fecha Ingreso</th>
+            <th>Acciones</th>
           </thead>
           <tbody>
             <tr *ngFor="let entry of motosEstacionadas | keyvalue" class="text-center">
@@ -82,7 +78,7 @@
 <div class="modal" id="registrarModal">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form (submit)="estacionarVehiculo()" #f="ngForm" novalidate>
+      <form (submit)="estacionarVehiculo()" #f="ngForm">
         <!-- Modal Header -->
         <div class="modal-header">
           <h4 class="modal-title">Registrar Vehículo</h4>
@@ -94,26 +90,39 @@
 
           <div class="form-group">
             <label for="txtPlaca">Placa</label>
-            <input type="text" class="form-control text-uppercase" id="txtPlaca" name="placa" autocomplete="off"
-              [(ngModel)]="vehiculoSeleccionado.vehiculo.placa">
+            <input #txtPlaca="ngModel" type="text" class="form-control text-uppercase" id="txtPlaca" name="placa" autocomplete="off"
+              required [(ngModel)]="vehiculoSeleccionado.vehiculo.placa" [ngClass]="{'is-invalid' : txtPlaca.invalid && txtPlaca.touched,
+              'is-valid': txtPlaca.valid}">
+            <div *ngIf="txtPlaca?.errors?.required" class="invalid-feedback">
+              El campo es obligatorio.
+            </div>
           </div>
 
           <div class="form-group">
             <label for="txtMarca">Marca</label>
-            <input type="text" class="form-control" id="txtMarca" name="marca" autocomplete="off" [(ngModel)]="vehiculoSeleccionado.vehiculo.marca">
+            <input #txtMarca="ngModel" type="text" class="form-control" id="txtMarca" name="marca" autocomplete="off"
+              required [(ngModel)]="vehiculoSeleccionado.vehiculo.marca" [ngClass]="{'is-invalid' : txtMarca.invalid && txtMarca.touched,
+              'is-valid': txtMarca.valid}">
+            <div *ngIf="txtMarca?.errors?.required" class="invalid-feedback">
+              El campo es obligatorio.
+            </div>
           </div>
 
           <div class="form-group">
             <label for="txtModelo">Modelo</label>
-            <input type="text" class="form-control" id="txtModelo" name="modelo" autocomplete="off" maxlength="4"
-              [(ngModel)]="vehiculoSeleccionado.vehiculo.modelo">
+            <input #txtModelo="ngModel" type="text" class="form-control" id="txtModelo" name="modelo" autocomplete="off"
+              maxlength="4" required [(ngModel)]="vehiculoSeleccionado.vehiculo.modelo" pattern="\d*" [ngClass]="{ 'is-invalid' : txtModelo.invalid && txtModelo.touched,
+                           'is-valid': txtModelo.valid  }">
+            <div *ngIf="txtModelo?.errors?.pattern" class="invalid-feedback">
+              Solo se permiten números.
+            </div>
           </div>
           <section *ngIf="vehiculoSeleccionado.vehiculo.tipo == 1">
-              <div class="form-group">
-                  <label for="txtCilindraje">Cilindraje</label>
-                  <input type="number" class="form-control" id="txtCilindraje" name="cilindraje" autocomplete="off" maxlength="4"
-                    [(ngModel)]="vehiculoSeleccionado.vehiculo.cilindraje">
-                </div>
+            <div class="form-group">
+              <label for="txtCilindraje">Cilindraje</label>
+              <input type="number" class="form-control" id="txtCilindraje" name="cilindraje" autocomplete="off"
+                maxlength="4" [(ngModel)]="vehiculoSeleccionado.vehiculo.cilindraje">
+            </div>
           </section>
         </div>
 

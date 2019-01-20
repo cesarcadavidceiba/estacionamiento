@@ -19,15 +19,12 @@ public class VehiculoModel {
 	private EtipoVehiculo tipo;
 
 	// Constantes
-	private static final int CILINDRAJE_MINIMO = 0;
+	private static final int CILINDRAJE_MINIMO = 1;
 
 	@JsonCreator
 	public VehiculoModel(@JsonProperty("placa") String placa, @JsonProperty("marca") String marca,
 			@JsonProperty("modelo") String modelo, @JsonProperty("cilindraje") Integer cilindraje,
 			@JsonProperty("tipo") EtipoVehiculo tipo) {
-		if (tipo == EtipoVehiculo.MOTO && (cilindraje == null || cilindraje <= CILINDRAJE_MINIMO)) {
-			throw new VehiculoMotoSinCilindrajeExcepcion();
-		}
 
 		this.placa = placa;
 		this.marca = marca;
@@ -36,6 +33,13 @@ public class VehiculoModel {
 		this.tipo = tipo;
 	}
 
+	//Acciones
+	public void validarCilindrajeMotos() {
+		if (tipo == EtipoVehiculo.MOTO && (cilindraje == null || cilindraje < CILINDRAJE_MINIMO)) {
+			throw new VehiculoMotoSinCilindrajeExcepcion();
+		}
+	}
+	
 	// Getter
 	public String getPlaca() {
 		return placa.toUpperCase();

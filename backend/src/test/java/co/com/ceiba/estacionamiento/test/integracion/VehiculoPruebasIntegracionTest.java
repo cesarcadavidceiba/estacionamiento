@@ -41,6 +41,7 @@ import co.com.ceiba.estacionamiento.test.testdatabuilder.VehiculoTestDataBuilder
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Aplicacion.class)
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
+//@Category(Integrati)
 public class VehiculoPruebasIntegracionTest {
 
 	@Autowired
@@ -87,7 +88,8 @@ public class VehiculoPruebasIntegracionTest {
 		final LocalDateTime FECHA_ENTRADA = LocalDateTime.of(2019, Month.JANUARY, 15, 7, 0);
 
 		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("RFT 451").build();
-		FacturaVehiculo facturaVehiculo = new FacturaVehiculoTestDataBuilder().conVehiculo(vehiculo).conFechaEntrada(FECHA_ENTRADA).build();
+		FacturaVehiculo facturaVehiculo = new FacturaVehiculoTestDataBuilder().conVehiculo(vehiculo)
+				.conFechaEntrada(FECHA_ENTRADA).build();
 
 		facturaVehiculoRepository.save(facturaVehiculo);
 
