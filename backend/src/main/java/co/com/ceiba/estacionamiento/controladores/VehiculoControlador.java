@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.com.ceiba.estacionamiento.modelos.FacturaVehiculoModel;
+import co.com.ceiba.estacionamiento.modelos.TcrmModel;
 import co.com.ceiba.estacionamiento.servicios.FacturaVehiculoService;
 
 @RestController
@@ -37,6 +38,11 @@ public class VehiculoControlador {
 	@GetMapping("/vehiculos")
 	public List<FacturaVehiculoModel> cargarVehiculosEstacionados() {
 		return facturaVehiculoService.cargarVehiculosEstacionados();
+	}
+	
+	@GetMapping("/trm")
+	public TcrmModel rest() {
+		return facturaVehiculoService.consultarTcrm();
 	}
 
 }

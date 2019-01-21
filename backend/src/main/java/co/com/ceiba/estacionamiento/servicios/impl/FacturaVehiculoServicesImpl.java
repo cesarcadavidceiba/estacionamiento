@@ -14,7 +14,9 @@ import co.com.ceiba.estacionamiento.excepciones.PosicionEstacionamientoOcupadaEx
 import co.com.ceiba.estacionamiento.excepciones.VehiculoNoSeEncuentraEstacionadoExcepcion;
 import co.com.ceiba.estacionamiento.excepciones.VehiculoSeEncuentraEstacionadoExcepcion;
 import co.com.ceiba.estacionamiento.modelos.FacturaVehiculoModel;
+import co.com.ceiba.estacionamiento.modelos.TcrmModel;
 import co.com.ceiba.estacionamiento.repositorios.FacturaVehiculoRepository;
+import co.com.ceiba.estacionamiento.repositorios.ws.TrcmRepository;
 import co.com.ceiba.estacionamiento.servicios.FacturaVehiculoService;
 import co.com.ceiba.estacionamiento.util.LocalDateTimeWrapper;
 
@@ -26,13 +28,15 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 	private static final int CANTIDAD_MAXIMA_MOTOS = 10;
 
 	private FacturaVehiculoRepository facturaVehiculoRepository;
+	private TrcmRepository trcmRepository;
 
 	private LocalDateTimeWrapper localDateTimeWrapper;
 
 	public FacturaVehiculoServicesImpl(FacturaVehiculoRepository facturaVehiculoRepository,
-			LocalDateTimeWrapper localDateTimeWrapper) {
+			LocalDateTimeWrapper localDateTimeWrapper, TrcmRepository trcmRepository) {
 		this.facturaVehiculoRepository = facturaVehiculoRepository;
 		this.localDateTimeWrapper = localDateTimeWrapper;
+		this.trcmRepository = trcmRepository;
 	}
 
 	@Override
@@ -44,7 +48,7 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 	@Override
 	public FacturaVehiculoModel estacionarVehiculo(FacturaVehiculoModel facturaVehiculoModel) {
 		facturaVehiculoModel.getVehiculo().validarCilindrajeMotos();
-		
+
 		facturaVehiculoModel.setFechaEntrada(localDateTimeWrapper.now());
 
 		facturaVehiculoModel.vehiculoPuedeEstacionar();
@@ -96,7 +100,7 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 	public long darSalidaVehiculoEstacionado(String placa) {
 		// Verificar que el vehiculo se encuentre estacionado
 		FacturaVehiculo facturaVehiculo = facturaVehiculoRepository.findByVehiculoPlacaAndFechaSalidaIsNull(placa)
-				.orElseThrow(() -> new VehiculoNoSeEncuentraEstacionadoExcepcion());
+				.orElseThrow(VehiculoNoSeEncuentraEstacionadoExcepcion::new);
 
 		facturaVehiculo.setFechaSalida(localDateTimeWrapper.now());
 		FacturaVehiculoModel facturaVehiculoModel = FacturaVehiculo.convertirAModelo(facturaVehiculo);
@@ -105,6 +109,11 @@ public class FacturaVehiculoServicesImpl implements FacturaVehiculoService {
 		facturaVehiculoRepository.save(facturaVehiculo);
 
 		return valorPagar;
+	}
+
+	@Override
+	public TcrmModel consultarTcrm() {
+		return trcmRepository.consultarTrcm();
 	}
 
 }

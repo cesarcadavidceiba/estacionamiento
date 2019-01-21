@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { VehiculoService } from './services/vehiculo.service';
 import { FacturaVehiculo } from './model/factura-vehiculo';
+import { Tcrm } from './model/tcrm';
 
 @Component({
   selector: 'app-root',
@@ -17,9 +18,7 @@ export class AppComponent implements OnInit {
 
   public valorPagar: number;
 
-  public pintarTablaCarros: boolean;
-  public cambiarEstiloTabCarro: String;
-  public cambiarEstiloTabMoto: String;
+  public tcrm: Tcrm;
 
   @ViewChild('closeBtn') private closeBtn: ElementRef;
 
@@ -27,9 +26,7 @@ export class AppComponent implements OnInit {
     this.carrosEstacionados = new Map<number, FacturaVehiculo>();
     this.motosEstacionadas = new Map<number, FacturaVehiculo>();
     this.vehiculoSeleccionado = new FacturaVehiculo();
-    this.pintarTablaCarros = true;
-    this.cambiarEstiloTabCarro = 'active';
-    this.cambiarEstiloTabMoto = '';
+    this.tcrm = new Tcrm();
     this.crearParqueadero();
   }
 
@@ -54,6 +51,11 @@ export class AppComponent implements OnInit {
           }
         }
       });
+
+    this.vehiculoService.consultarTrm().subscribe(tcrm => {
+      this.tcrm = tcrm;
+      console.log(this.tcrm);
+    });
   }
 
   public darSalidaVehiculos(posicion: number, tipoVehiculo: number): void {
@@ -66,12 +68,11 @@ export class AppComponent implements OnInit {
       } else {
         this.motosEstacionadas.set(posicion, new FacturaVehiculo());
       }
-
-
     });
   }
 
   public ingresarVehiculo(posicion: number, tipo: number): void {
+    this.vehiculoSeleccionado = new FacturaVehiculo();
     this.vehiculoSeleccionado.posicion = posicion;
     this.vehiculoSeleccionado.vehiculo.tipo = tipo;
   }
@@ -90,10 +91,8 @@ export class AppComponent implements OnInit {
     });
   }
 
-  public navegarTabVehiculos(tipoVehiculo: number): void {
-    this.pintarTablaCarros = tipoVehiculo === 0;
-    this.cambiarEstiloTabCarro = this.pintarTablaCarros ? 'active' : '';
-    this.cambiarEstiloTabMoto = !this.pintarTablaCarros ? 'active' : '';
+  public consultarTrm(): void {
+
   }
 
 }

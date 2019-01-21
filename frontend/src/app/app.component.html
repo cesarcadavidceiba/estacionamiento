@@ -1,76 +1,102 @@
 <div class="card mt-5">
-  <ul class="nav nav-tabs">
+  <ul class="nav nav-tabs" id="tabs" role="tablist">
     <li class="nav-item">
-      <a [ngClass]="['nav-link', cambiarEstiloTabCarro]" (click)="navegarTabVehiculos(0)" href="#">Carros</a>
+      <a class="nav-link active" id="carros-tab" data-toggle="tab" href="#carros" role="tab" aria-controls="carros"
+        aria-selected="true">Carros</a>
     </li>
     <li class="nav-item">
-      <a [ngClass]="['nav-link', cambiarEstiloTabMoto]" (click)="navegarTabVehiculos(1)" href="#">Motos</a>
+      <a class="nav-link" id="motos-tab" data-toggle="tab" href="#motos" role="tab" aria-controls="motos" aria-selected="true">Motos</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="trm-tab" data-toggle="tab" href="#trm" role="tab" aria-controls="trm" aria-selected="true">TRM</a>
     </li>
   </ul>
   <div class="card-body">
-    <section *ngIf="pintarTablaCarros; else tablaMotos">
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead>
-            <tr class="bg-dark text-white text-center">
+    <div class="tab-content" id="tabsContenido">
+      <div class="tab-pane fade show active" id="carros" role="tabpanel" aria-labelledby="carros-tab">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr class="bg-dark text-white text-center">
+                <th>Posición</th>
+                <th>Placa</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Fecha Ingreso</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let entry of carrosEstacionados | keyvalue" class="text-center">
+                <td>{{entry.key}}</td>
+                <td>{{entry.value.vehiculo.placa}}</td>
+                <td>{{entry.value.vehiculo.marca}}</td>
+                <td>{{entry.value.vehiculo.modelo}}</td>
+                <td>{{entry.value.fechaEntrada | date : 'dd/MM/yyyy hh:mm a'}}</td>
+                <td>
+                  <button *ngIf="entry.value.vehiculo.placa == null" class="btn btn-primary" data-target="#registrarModal"
+                    data-toggle="modal" (click)="ingresarVehiculo(entry.key, 0)"><i class="fas fa-sign-in-alt"></i></button>
+                  <button *ngIf="entry.value.vehiculo.placa" class="btn btn-danger" data-target="#valorPagarModal"
+                    data-toggle="modal" (click)="darSalidaVehiculos(entry.key, 0)"><i class="fas fa-sign-out-alt"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="motos" role="tabpanel" aria-labelledby="motos-tab">
+        <div class="table-responsive-lg">
+          <table class="table">
+            <thead class="bg-dark text-white text-center">
               <th>Posición</th>
               <th>Placa</th>
               <th>Marca</th>
               <th>Modelo</th>
+              <th>Cilindraje</th>
               <th>Fecha Ingreso</th>
               <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let entry of carrosEstacionados | keyvalue" class="text-center">
-              <td>{{entry.key}}</td>
-              <td>{{entry.value.vehiculo.placa}}</td>
-              <td>{{entry.value.vehiculo.marca}}</td>
-              <td>{{entry.value.vehiculo.modelo}}</td>
-              <td>{{entry.value.fechaEntrada | date : 'dd/MM/yyyy hh:mm a'}}</td>
-              <td>
-                <button *ngIf="entry.value.vehiculo.placa == null" class="btn btn-primary" data-target="#registrarModal"
-                  data-toggle="modal" (click)="ingresarVehiculo(entry.key, 0)"><i class="fas fa-sign-in-alt"></i></button>
-                <button *ngIf="entry.value.vehiculo.placa" class="btn btn-danger" data-target="#valorPagarModal"
-                  data-toggle="modal" (click)="darSalidaVehiculos(entry.key, 0)"><i class="fas fa-sign-out-alt"></i></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-    <ng-template #tablaMotos>
-      <div class="table-responsive-lg">
-        <table class="table">
-          <thead class="bg-dark text-white text-center">
-            <th>Posición</th>
-            <th>Placa</th>
-            <th>Marca</th>
-            <th>Modelo</th>
-            <th>Cilindraje</th>
-            <th>Fecha Ingreso</th>
-            <th>Acciones</th>
-          </thead>
-          <tbody>
-            <tr *ngFor="let entry of motosEstacionadas | keyvalue" class="text-center">
-              <td>{{entry.key}}</td>
-              <td>{{entry.value.vehiculo.placa}}</td>
-              <td>{{entry.value.vehiculo.marca}}</td>
-              <td>{{entry.value.vehiculo.modelo}}</td>
-              <td>{{entry.value.vehiculo.cilindraje | number: '1.0-0'}}</td>
-              <td>{{entry.value.fechaEntrada | date : 'dd/MM/yyyy hh:mm a'}}</td>
-              <td>
-                <button *ngIf="entry.value.vehiculo.placa == null" class="btn btn-primary" data-target="#registrarModal"
-                  data-toggle="modal" (click)="ingresarVehiculo(entry.key, 1)"><i class="fas fa-sign-in-alt"></i></button>
+            </thead>
+            <tbody>
+              <tr *ngFor="let entry of motosEstacionadas | keyvalue" class="text-center">
+                <td>{{entry.key}}</td>
+                <td>{{entry.value.vehiculo.placa}}</td>
+                <td>{{entry.value.vehiculo.marca}}</td>
+                <td>{{entry.value.vehiculo.modelo}}</td>
+                <td>{{entry.value.vehiculo.cilindraje | number: '1.0-0'}}</td>
+                <td>{{entry.value.fechaEntrada | date : 'dd/MM/yyyy hh:mm a'}}</td>
+                <td>
+                  <button *ngIf="entry.value.vehiculo.placa == null" class="btn btn-primary" data-target="#registrarModal"
+                    data-toggle="modal" (click)="ingresarVehiculo(entry.key, 1)"><i class="fas fa-sign-in-alt"></i></button>
 
-                <button *ngIf="entry.value.vehiculo.placa" class="btn btn-danger" data-target="#valorPagarModal"
-                  data-toggle="modal" (click)="darSalidaVehiculos(entry.key, 1)"><i class="fas fa-sign-out-alt"></i></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                  <button *ngIf="entry.value.vehiculo.placa" class="btn btn-danger" data-target="#valorPagarModal"
+                    data-toggle="modal" (click)="darSalidaVehiculos(entry.key, 1)"><i class="fas fa-sign-out-alt"></i></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </ng-template>
+      <div class="tab-pane fade" id="trm" role="tabpanel" aria-labelledby="trm-tab">
+        <div class="table-responsive-lg">
+          <table class="table">
+            <thead class="bg-dark text-white text-center">
+              <th>Vigencia Inicial</th>
+              <th>Vigencia Final</th>
+              <th>TRM</th>
+              <th>Unidad</th>
+            </thead>
+            <tbody>
+              <tr class="text-center">
+                <td>{{tcrm.fechaVigenciaInicial | date : 'dd/MM/yyy'}}</td>
+                <td>{{tcrm.fechaVigenciaFinal | date : 'dd/MM/yyyy'}}</td>
+                <td>{{tcrm.valor}}</td>
+                <td>{{tcrm.unidad}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -90,8 +116,8 @@
 
           <div class="form-group">
             <label for="txtPlaca">Placa</label>
-            <input #txtPlaca="ngModel" type="text" class="form-control text-uppercase" id="txtPlaca" name="placa" autocomplete="off"
-              required [(ngModel)]="vehiculoSeleccionado.vehiculo.placa" [ngClass]="{'is-invalid' : txtPlaca.invalid && txtPlaca.touched,
+            <input #txtPlaca="ngModel" type="text" class="form-control text-uppercase" id="txtPlaca" name="placa"
+              autocomplete="off" required [(ngModel)]="vehiculoSeleccionado.vehiculo.placa" [ngClass]="{'is-invalid' : txtPlaca.invalid && txtPlaca.touched,
               'is-valid': txtPlaca.valid}">
             <div *ngIf="txtPlaca?.errors?.required" class="invalid-feedback">
               El campo es obligatorio.
@@ -120,9 +146,15 @@
           <section *ngIf="vehiculoSeleccionado.vehiculo.tipo == 1">
             <div class="form-group">
               <label for="txtCilindraje">Cilindraje</label>
-              <input type="number" class="form-control" id="txtCilindraje" name="cilindraje" autocomplete="off"
-                maxlength="4" [(ngModel)]="vehiculoSeleccionado.vehiculo.cilindraje">
+              <input #txtCilindraje="ngModel" type="text" class="form-control" id="txtCilindraje" name="cilindraje"
+                autocomplete="off" maxlength="4" required [(ngModel)]="vehiculoSeleccionado.vehiculo.cilindraje"
+                pattern="\d*" [ngClass]="{ 'is-invalid' : txtCilindraje.invalid && txtCilindraje.touched,
+                'is-valid': txtCilindraje.valid  }">
+              <div *ngIf="txtCilindraje?.errors?.pattern" class="invalid-feedback">
+                Solo se permiten números.
+              </div>
             </div>
+
           </section>
         </div>
 

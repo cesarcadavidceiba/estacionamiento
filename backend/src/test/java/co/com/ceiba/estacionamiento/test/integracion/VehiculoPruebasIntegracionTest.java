@@ -41,7 +41,6 @@ import co.com.ceiba.estacionamiento.test.testdatabuilder.VehiculoTestDataBuilder
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Aplicacion.class)
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
-//@Category(Integrati)
 public class VehiculoPruebasIntegracionTest {
 
 	@Autowired

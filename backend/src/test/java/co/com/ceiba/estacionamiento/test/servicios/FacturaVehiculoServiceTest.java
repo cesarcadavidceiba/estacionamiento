@@ -44,6 +44,7 @@ import co.com.ceiba.estacionamiento.util.LocalDateTimeWrapper;
 @RunWith(SpringRunner.class)
 public class FacturaVehiculoServiceTest {
 
+	private static final String YAMAHA = "YAMAHA";
 	// Constantes
 	private static final int CANTIDAD_MAXIMA_CARROS_ESTACIONADOS = 20;
 	private static final int CANTIDAD_MAXIMA_MOTOS_ESTACIONADAS = 10;
@@ -65,7 +66,7 @@ public class FacturaVehiculoServiceTest {
 	@Before
 	public void setup() {
 		FacturaVehiculo facturaVehiculo = new FacturaVehiculoTestDataBuilder().conId(1L).build();
-		facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository, localDateTimeWrapper);
+		facturaVehiculoService = new FacturaVehiculoServicesImpl(facturaVehiculoRepository, localDateTimeWrapper, null);
 		when(facturaVehiculoRepository.save(any(FacturaVehiculo.class))).thenReturn(facturaVehiculo);
 	}
 
@@ -96,7 +97,7 @@ public class FacturaVehiculoServiceTest {
 				.conTipo(EtipoVehiculo.CARRO).build();
 		FacturaVehiculo estacionarChevrolet = new FacturaVehiculoTestDataBuilder().conVehiculo(chrevrolet).build();
 
-		Vehiculo yamaha = new VehiculoTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA").conModelo("2018")
+		Vehiculo yamaha = new VehiculoTestDataBuilder().conPlaca("NIV 17E").conMarca(YAMAHA).conModelo("2018")
 				.conCilindraje(150).conTipo(EtipoVehiculo.MOTO).build();
 		FacturaVehiculo estacionarMotoYahama = new FacturaVehiculoTestDataBuilder().conVehiculo(yamaha).build();
 
@@ -149,7 +150,7 @@ public class FacturaVehiculoServiceTest {
 	public void estaciomaientoMotosLlenoTest() {
 		// Arrange
 		VehiculoModel vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conCilindraje(150)
-				.conMarca("YAMAHA").conModelo("2018").conTipo(EtipoVehiculo.MOTO).build();
+				.conMarca(YAMAHA).conModelo("2018").conTipo(EtipoVehiculo.MOTO).build();
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModelTestDataBuilder().conVehiculo(vehiculoModel)
 				.build();
 
@@ -169,7 +170,7 @@ public class FacturaVehiculoServiceTest {
 	@Test
 	public void posicionEstacionamientoOcupadaTest() {
 		// Arrange
-		VehiculoModel vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA")
+		VehiculoModel vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conMarca(YAMAHA)
 				.conModelo("2018").conCilindraje(150).conTipo(EtipoVehiculo.MOTO).build();
 
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModelTestDataBuilder().conVehiculo(vehiculoModel)
@@ -192,7 +193,7 @@ public class FacturaVehiculoServiceTest {
 	@Test
 	public void vehiculoSeEncuentraEstacionadoTest() {
 		// Arrange
-		VehiculoModel vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA")
+		VehiculoModel vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conMarca(YAMAHA)
 				.conModelo("2018").conCilindraje(150).conTipo(EtipoVehiculo.MOTO).build();
 
 		FacturaVehiculoModel facturaVehiculoModel = new FacturaVehiculoModelTestDataBuilder().conVehiculo(vehiculoModel)
@@ -310,7 +311,7 @@ public class FacturaVehiculoServiceTest {
 		final int CILINDRAJE_MOTO_MAYOR_500 = 650;
 		final LocalDateTime FECHA_ENTRADA = LocalDateTime.of(2019, Month.JANUARY, 15, 7, 0);
 
-		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA")
+		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("NIV 17E").conMarca(YAMAHA)
 				.conTipo(EtipoVehiculo.MOTO).conCilindraje(CILINDRAJE_MOTO_MAYOR_500).build();
 
 		FacturaVehiculo entity = new FacturaVehiculoTestDataBuilder().conVehiculo(vehiculo)
@@ -332,7 +333,7 @@ public class FacturaVehiculoServiceTest {
 	public void darSalidaEstacionamientoMoto10HorasCilindraje150ValorPagar4000() {
 		// Arrange
 		final LocalDateTime FECHA_ENTRADA = LocalDateTime.of(2019, Month.JANUARY, 15, 7, 0);
-		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA")
+		Vehiculo vehiculo = new VehiculoTestDataBuilder().conPlaca("NIV 17E").conMarca(YAMAHA)
 				.conTipo(EtipoVehiculo.MOTO).conCilindraje(CILINDRAJE_MOTO_MENOR_500).build();
 
 		FacturaVehiculo entity = new FacturaVehiculoTestDataBuilder().conVehiculo(vehiculo)
@@ -353,7 +354,7 @@ public class FacturaVehiculoServiceTest {
 	@Test
 	public void ingresoMotoConCilindrajeNull() {
 		// Arrange
-		VehiculoModel vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA")
+		VehiculoModel vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conMarca(YAMAHA)
 				.conTipo(EtipoVehiculo.MOTO).build();
 		FacturaVehiculoModel FacturaVehiculoModel = new FacturaVehiculoModelTestDataBuilder().conVehiculo(vehiculoModel)
 				.build();
@@ -373,7 +374,7 @@ public class FacturaVehiculoServiceTest {
 	public void ingresoMotoConCilindrajeCero() {
 		// Arrange
 		final int CILINDRAJE_CERO = 0;
-		VehiculoModel vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conMarca("YAMAHA")
+		VehiculoModel vehiculoModel = new VehiculoModelTestDataBuilder().conPlaca("NIV 17E").conMarca(YAMAHA)
 				.conCilindraje(CILINDRAJE_CERO).conTipo(EtipoVehiculo.MOTO).build();
 		FacturaVehiculoModel FacturaVehiculoModel = new FacturaVehiculoModelTestDataBuilder().conVehiculo(vehiculoModel)
 				.build();

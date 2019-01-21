@@ -3,6 +3,7 @@ package co.com.ceiba.estacionamiento.servicios;
 import java.util.List;
 
 import co.com.ceiba.estacionamiento.modelos.FacturaVehiculoModel;
+import co.com.ceiba.estacionamiento.modelos.TcrmModel;
 
 public interface FacturaVehiculoService {
 
@@ -12,7 +13,7 @@ public interface FacturaVehiculoService {
 	 * 
 	 * @return
 	 */
-	public List<FacturaVehiculoModel> cargarVehiculosEstacionados();
+	List<FacturaVehiculoModel> cargarVehiculosEstacionados();
 
 	/**
 	 * 
@@ -21,7 +22,7 @@ public interface FacturaVehiculoService {
 	 * @param facturaVehiculoModel
 	 * @return vehiculo estacionado
 	 */
-	public FacturaVehiculoModel estacionarVehiculo(FacturaVehiculoModel facturaVehiculoModel);
+	FacturaVehiculoModel estacionarVehiculo(FacturaVehiculoModel facturaVehiculoModel);
 
 	/**
 	 * 
@@ -30,5 +31,11 @@ public interface FacturaVehiculoService {
 	 * @param placa
 	 * @return Valor a pagar por el cliente
 	 */
-	public long darSalidaVehiculoEstacionado(String placa);
+	long darSalidaVehiculoEstacionado(String placa);
+	
+	/***
+	 * 
+	 * @return
+	 */
+	TcrmModel consultarTcrm();
 }

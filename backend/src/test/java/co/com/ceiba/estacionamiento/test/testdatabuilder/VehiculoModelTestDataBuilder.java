@@ -38,6 +38,12 @@ public class VehiculoModelTestDataBuilder {
 		return this;
 	}
 
+	public VehiculoModelTestDataBuilder conMarcaYamaha() {
+		this.marca = "YAMAHA";
+		return this;
+	}
+
+	
 	public VehiculoModelTestDataBuilder conModelo(String modelo) {
 		this.modelo = modelo;
 		return this;
