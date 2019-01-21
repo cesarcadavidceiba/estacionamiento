@@ -11,10 +11,10 @@ export class Handlers implements ErrorHandler {
   handleError(error: Error): void {
     console.log(error);
     if (error instanceof HttpErrorResponse) {
-      if (error.status === 504) {
-        this.toastr.info('El servidor no se encuentra disponible en estos momentos, por favor intente mas tarde');
-      } else {
+      if (error.status === 409) {
         this.toastr.info(error.error);
+      } else {
+        this.toastr.info('El servidor no se encuentra disponible en estos momentos, por favor intente mas tarde');
       }
 
     }
