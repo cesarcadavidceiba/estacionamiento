@@ -54,9 +54,13 @@ describe('Estacionar un carro', () => {
     page.campoMarca().sendKeys('MAZDA');
     page.campoModelo().sendKeys('2015');
     sleep();
+  });
+
+  it('Enviar estacionar carro', () => {
     page.enviarIngresarVehiculo();
     sleep();
   });
+
 });
 
 describe('Estacionar una moto', () => {
@@ -84,6 +88,10 @@ describe('Estacionar una moto', () => {
     page.campoModelo().sendKeys('2018');
     page.campoCilindraje().sendKeys(150);
     sleep();
+
+  });
+
+  it('Enviar estacionar moto', () => {
     page.enviarIngresarVehiculo();
     sleep();
   });
