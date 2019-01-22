@@ -1,12 +1,8 @@
 import { browser, by, element } from 'protractor';
 
 export class AppPage {
-  navigateTo() {
+  inicio() {
     return browser.get('/');
-  }
-
-  getTitleText() {
-    return element(by.css('app-root h1')).getText();
   }
 
   ingresarTabCarros() {
@@ -29,36 +25,50 @@ export class AppPage {
     return element.all(by.id('btnIngresarCarro')).first().click();
   }
 
-  campoPlaca() {
-    const placa = element(by.id('txtPlaca'));
-    placa.click();
-    placa.clear();
-    return placa;
+  campoPlaca(placa: string) {
+    const txtPlaca = element(by.id('txtPlaca'));
+    txtPlaca.click();
+    txtPlaca.clear();
+    txtPlaca.sendKeys(placa);
+    return txtPlaca;
   }
 
-  campoMarca() {
-    const marca = element(by.id('txtMarca'));
-    marca.click();
-    marca.clear();
-    return marca;
+  campoMarca(marca: string) {
+    const txtMarca = element(by.id('txtMarca'));
+    txtMarca.click();
+    txtMarca.clear();
+    txtMarca.sendKeys(marca);
+    return txtMarca;
   }
 
-  campoModelo() {
-    const modelo = element(by.id('txtModelo'));
-    modelo.click();
-    modelo.clear();
-    return modelo;
+  campoModelo(modelo: string) {
+    const txtModelo = element(by.id('txtModelo'));
+    txtModelo.click();
+    txtModelo.clear();
+    txtModelo.sendKeys(modelo);
+    return txtModelo;
   }
 
-  campoCilindraje() {
-    const cilindraje = element(by.id('txtCilindraje'));
-    cilindraje.click();
-    cilindraje.clear();
-    return cilindraje;
+  campoCilindraje(cilindraje: number) {
+    const txtCilindraje = element(by.id('txtCilindraje'));
+    txtCilindraje.click();
+    txtCilindraje.clear();
+    txtCilindraje.sendKeys(cilindraje);
+    return txtCilindraje;
   }
 
   enviarIngresarVehiculo() {
-    return element(by.id('btnEnviar')).click();
+    const btnEnviar = element(by.id('btnEnviar'));
+    btnEnviar.click();
+    return;
+  }
+
+  tdConPlaca() {
+    const tablaCarros = element(by.id('tbCarros'));
+    const rows = tablaCarros.all(by.tagName('tr'));
+
+    const cells = rows.all(by.tagName('td'));
+    return cells;
   }
 
 }
