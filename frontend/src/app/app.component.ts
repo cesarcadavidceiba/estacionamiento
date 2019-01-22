@@ -54,7 +54,6 @@ export class AppComponent implements OnInit {
 
     this.vehiculoService.consultarTrm().subscribe(tcrm => {
       this.tcrm = tcrm;
-      console.log(this.tcrm);
     });
   }
 
