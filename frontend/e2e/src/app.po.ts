@@ -27,8 +27,12 @@ export class AppPage {
     return element.all(by.id('btnIngresarCarro')).first().click();
   }
 
-  darSalidaVehiculo() {
+  darSalidaCarro() {
     return element.all(by.id('btnDarSalidaCarro')).first().click();
+  }
+
+  darSalidaMoto() {
+    return element.all(by.id('btnDarSalidaMoto')).first().click();
   }
 
   campoPlaca(placa: string) {
@@ -55,7 +59,7 @@ export class AppPage {
     return txtModelo;
   }
 
-  campoCilindraje(cilindraje: number) {
+  campoCilindraje(cilindraje: string) {
     const txtCilindraje = element(by.id('txtCilindraje'));
     txtCilindraje.click();
     txtCilindraje.clear();
@@ -67,6 +71,10 @@ export class AppPage {
     return element(by.id('btnEnviar')).click();
   }
 
+  botonEnviarActivo() {
+    return element(by.id('btnEnviar')).isEnabled();
+  }
+
   public sleep(): void {
     browser.driver.sleep(1500);
   }
@@ -75,12 +83,40 @@ export class AppPage {
     return element(by.id('txtPosicion')).getAttribute('value');
   }
 
-  public obtenerPlacaDeTabla(posicion: string) {
+  public obtenerPlacaCarroDeTabla(posicion: string) {
     return element(by.css('#tbCarros .text-center:nth-child(' + posicion + ') > td:nth-child(2)')).getText();
+  }
+
+  public obtenerMarcaCarroDeTabla(posicion: string) {
+    return element(by.css('#tbCarros .text-center:nth-child(' + posicion + ') > td:nth-child(3)')).getText();
+  }
+
+  public obtenerModeloCarroDeTabla(posicion: string) {
+    return element(by.css('#tbCarros .text-center:nth-child(' + posicion + ') > td:nth-child(4)')).getText();
+  }
+
+  public obtenerPlacaMotoDeTabla(posicion: string) {
+    return element(by.css('#tbMotos .text-center:nth-child(' + posicion + ') > td:nth-child(2)')).getText();
+  }
+
+  public obtenerMarcaMotoDeTabla(posicion: string) {
+    return element(by.css('#tbMotos .text-center:nth-child(' + posicion + ') > td:nth-child(3)')).getText();
+  }
+
+  public obtenerModeloMotoDeTabla(posicion: string) {
+    return element(by.css('#tbMotos .text-center:nth-child(' + posicion + ') > td:nth-child(4)')).getText();
+  }
+
+  public obtenerCilindrajeMotoDeTabla(posicion: string) {
+    return element(by.css('#tbMotos .text-center:nth-child(' + posicion + ') > td:nth-child(5)')).getText();
   }
 
   obtenerValorPagar() {
     return element(by.id('lblValorPagar')).getText();
+  }
+
+  advertenciaSeMuestra() {
+    return element(by.css('.toast-message')).isPresent();
   }
 
 }

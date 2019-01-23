@@ -46,7 +46,7 @@
       </div>
       <div class="tab-pane fade" id="motos" role="tabpanel" aria-labelledby="motos-tab">
         <div class="table-responsive-lg">
-          <table id="tblMotos" class="table">
+          <table id="tbMotos" class="table">
             <thead class="bg-dark text-white text-center">
               <th>Posición</th>
               <th>Placa</th>
@@ -68,7 +68,7 @@
                   <button *ngIf="entry.value.vehiculo.placa == null" id="btnIngresarMoto" class="btn btn-primary"
                     data-target="#registrarModal" data-toggle="modal" (click)="ingresarVehiculo(entry.key, 1)"><i class="fas fa-sign-in-alt"></i></button>
 
-                  <button *ngIf="entry.value.vehiculo.placa" class="btn btn-danger" data-target="#valorPagarModal"
+                  <button *ngIf="entry.value.vehiculo.placa" id="btnDarSalidaMoto" class="btn btn-danger" data-target="#valorPagarModal"
                     data-toggle="modal" (click)="darSalidaVehiculos(entry.key, 1)"><i class="fas fa-sign-out-alt"></i></button>
                 </td>
               </tr>
