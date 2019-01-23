@@ -1,7 +1,9 @@
 import { browser, by, element } from 'protractor';
+import { Component } from '@angular/core';
 
 export class AppPage {
   inicio() {
+    browser.manage().window().maximize();
     return browser.get('/');
   }
 
@@ -23,6 +25,10 @@ export class AppPage {
 
   abrirModalIngresarCarro() {
     return element.all(by.id('btnIngresarCarro')).first().click();
+  }
+
+  darSalidaVehiculo() {
+    return element.all(by.id('btnDarSalidaCarro')).first().click();
   }
 
   campoPlaca(placa: string) {
@@ -57,18 +63,24 @@ export class AppPage {
     return txtCilindraje;
   }
 
-  enviarIngresarVehiculo() {
-    const btnEnviar = element(by.id('btnEnviar'));
-    btnEnviar.click();
-    return;
+  ingresarVehiculo() {
+    return element(by.id('btnEnviar')).click();
   }
 
-  tdConPlaca() {
-    const tablaCarros = element(by.id('tbCarros'));
-    const rows = tablaCarros.all(by.tagName('tr'));
+  public sleep(): void {
+    browser.driver.sleep(1500);
+  }
 
-    const cells = rows.all(by.tagName('td'));
-    return cells;
+  public obtenerPosicion() {
+    return element(by.id('txtPosicion')).getAttribute('value');
+  }
+
+  public obtenerPlacaDeTabla(posicion: string) {
+    return element(by.css('#tbCarros .text-center:nth-child(' + posicion + ') > td:nth-child(2)')).getText();
+  }
+
+  obtenerValorPagar() {
+    return element(by.id('lblValorPagar')).getText();
   }
 
 }

@@ -34,7 +34,7 @@
                 <td>{{entry.value.vehiculo.modelo}}</td>
                 <td>{{entry.value.fechaEntrada | date : 'dd/MM/yyyy hh:mm a'}}</td>
                 <td>
-                  <button *ngIf="entry.value.vehiculo.placa == null" id="btnIngresarCarro" class="btn btn-primary btnId_{{i}}"
+                  <button *ngIf="entry.value.vehiculo.placa == null" id="btnIngresarCarro" class="btn btn-primary"
                     data-target="#registrarModal" data-toggle="modal" (click)="ingresarVehiculo(entry.key, 0)"><i class="fas fa-sign-in-alt"></i></button>
                   <button *ngIf="entry.value.vehiculo.placa" id="btnDarSalidaCarro" class="btn btn-danger" data-target="#valorPagarModal"
                     data-toggle="modal" (click)="darSalidaVehiculos(entry.key, 0)"><i class="fas fa-sign-out-alt"></i></button>
@@ -186,7 +186,7 @@
       </div>
 
       <div class="modal-body">
-        <h5>${{valorPagar | number: '1.0-0'}}</h5>
+        <h5>$</h5><h5 id="lblValorPagar">{{valorPagar | number: '1.0-0'}}</h5>
       </div>
     </div>
   </div>
