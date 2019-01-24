@@ -6,11 +6,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Clase Java para queryTCRMResponse complex type.
+ * <p>
+ * Clase Java para queryTCRMResponse complex type.
  * 
- * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
+ * <p>
+ * El siguiente fragmento de esquema especifica el contenido que se espera que
+ * haya en esta clase.
  * 
  * <pre>
  * &lt;complexType name="queryTCRMResponse">
@@ -27,24 +29,20 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "queryTCRMResponse", propOrder = {
-    "_return"
-})
+@XmlType(name = "queryTCRMResponse", propOrder = { "_return" })
 public class QueryTCRMResponse {
 
-    @XmlElement(name = "return")
-    protected TcrmResponse _return;
+	@XmlElement(name = "return")
+	protected TcrmResponse _return;
 
-    /**
-     * Obtiene el valor de la propiedad return.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TcrmResponse }
-     *     
-     */
-    public TcrmResponse getReturn() {
-        return _return;
-    }
+	/**
+	 * Obtiene el valor de la propiedad return.
+	 * 
+	 * @return possible object is {@link TcrmResponse }
+	 * 
+	 */
+	public TcrmResponse getReturn() {
+		return _return;
+	}
 
 }

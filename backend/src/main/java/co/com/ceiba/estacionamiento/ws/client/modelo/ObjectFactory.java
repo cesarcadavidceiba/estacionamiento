@@ -27,15 +27,6 @@ public class ObjectFactory {
 			"http://action.trm.services.generic.action.superfinanciera.nexura.sc.com.co/", "queryTCRM");
 
 	/**
-	 * Create a new ObjectFactory that can be used to create new instances of schema
-	 * derived classes for package:
-	 * co.com.sc.nexura.superfinanciera.action.generic.services.trm.action
-	 * 
-	 */
-	public ObjectFactory() {
-	}
-
-	/**
 	 * Create an instance of {@link QueryTCRM }
 	 * 
 	 */
