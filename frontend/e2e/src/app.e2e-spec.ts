@@ -83,8 +83,8 @@ describe('Estacionamiento', () => {
       page.sleep();
 
       page.ingresarVehiculo();
-      page.sleep();
 
+      page.esperarAdvertenciaSalga();
       const advertenciaSeMuestra = page.advertenciaSeMuestra();
 
       advertenciaSeMuestra.then(value => {

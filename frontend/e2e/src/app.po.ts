@@ -115,6 +115,12 @@ export class AppPage {
     return element(by.id('lblValorPagar')).getText();
   }
 
+  esperarAdvertenciaSalga() {
+    browser.wait(() => {
+      return element(by.css('.toast-message')).isDisplayed;
+    }, 2000);
+  }
+
   advertenciaSeMuestra() {
     return element(by.css('.toast-message')).isPresent();
   }
