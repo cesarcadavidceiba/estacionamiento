@@ -29,11 +29,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "queryTCRMResponse", propOrder = { "_return" })
+@XmlType(name = "queryTCRMResponse", propOrder = { "returnResponse" })
 public class QueryTCRMResponse {
 
 	@XmlElement(name = "return")
-	protected TcrmResponse _return;
+	protected TcrmResponse returnResponse;
 
 	/**
 	 * Obtiene el valor de la propiedad return.
@@ -42,7 +42,7 @@ public class QueryTCRMResponse {
 	 * 
 	 */
 	public TcrmResponse getReturn() {
-		return _return;
+		return returnResponse;
 	}
 
 }
