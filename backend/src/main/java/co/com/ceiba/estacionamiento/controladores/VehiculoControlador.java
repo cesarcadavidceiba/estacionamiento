@@ -41,7 +41,7 @@ public class VehiculoControlador {
 	}
 	
 	@GetMapping("/trm")
-	public TcrmModel rest() {
+	public TcrmModel consultarTcrm() {
 		return facturaVehiculoService.consultarTcrm();
 	}
 

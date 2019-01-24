@@ -47,16 +47,4 @@ public class QueryTCRMResponse {
         return _return;
     }
 
-    /**
-     * Define el valor de la propiedad return.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TcrmResponse }
-     *     
-     */
-    public void setReturn(TcrmResponse value) {
-        this._return = value;
-    }
-
 }

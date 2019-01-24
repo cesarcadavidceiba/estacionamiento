@@ -38,28 +38,4 @@ public class QueryTCRM {
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar tcrmQueryAssociatedDate;
 
-    /**
-     * Obtiene el valor de la propiedad tcrmQueryAssociatedDate.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public XMLGregorianCalendar getTcrmQueryAssociatedDate() {
-        return tcrmQueryAssociatedDate;
-    }
-
-    /**
-     * Define el valor de la propiedad tcrmQueryAssociatedDate.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public void setTcrmQueryAssociatedDate(XMLGregorianCalendar value) {
-        this.tcrmQueryAssociatedDate = value;
-    }
-
 }

@@ -102,5 +102,12 @@ public class VehiculoPruebasIntegracionTest {
 
 		assertThat(vehiculoEstacionado).isEmpty();
 	}
+	
+	@Test
+	public void cargarTrm() throws JsonProcessingException, Exception {
+		// Act
+		mvc.perform(get("/api/trm").contentType(MediaType.APPLICATION_JSON))
+				.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+	}
 
 }
