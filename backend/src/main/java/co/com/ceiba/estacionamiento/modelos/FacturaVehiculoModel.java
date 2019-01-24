@@ -54,25 +54,20 @@ public class FacturaVehiculoModel {
 	}
 
 	public Long obtenerValorPagar() {
-		Long valorCalculado = 0L;
+		long valorCalculado = 0;
 
 		long cantidadHoras = obtenerCantidadHoras();
-		boolean continuar = true;
 
-		long horasRestantes = cantidadHoras;
-
-		while (continuar) {
-			if (horasRestantes > VEINTICUATRO_HORAS) {
-				valorCalculado += vehiculo.getTipo().getValorDia();
-				horasRestantes = horasRestantes - VEINTICUATRO_HORAS;
+		if (cantidadHoras > VEINTICUATRO_HORAS) {
+			long diasEstacionado = cantidadHoras / VEINTICUATRO_HORAS;
+			long horas = cantidadHoras % VEINTICUATRO_HORAS;
+			valorCalculado = diasEstacionado * vehiculo.getTipo().getValorDia()
+					+ horas * vehiculo.getTipo().getValorHora();
+		} else {
+			if (cantidadHoras < NUEVE_HORAS) {
+				valorCalculado = cantidadHoras * vehiculo.getTipo().getValorHora();
 			} else {
-				if (horasRestantes > NUEVE_HORAS) {
-					// Se cobra el dia
-					valorCalculado += vehiculo.getTipo().getValorDia();
-				} else {
-					valorCalculado += vehiculo.getTipo().getValorHora() * horasRestantes;
-				}
-				continuar = false;
+				valorCalculado = vehiculo.getTipo().getValorDia();
 			}
 		}
 
