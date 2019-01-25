@@ -20,3 +20,11 @@
 .toast-warning {
   background-color: #F89406 !important;
 }
+
+.vehiculoRojo{
+  color: red;
+}
+
+.vehiculoVerde{
+  color: green;
+}

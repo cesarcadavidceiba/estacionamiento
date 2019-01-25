@@ -10,6 +10,10 @@
     <li class="nav-item">
       <a class="nav-link" id="trm-tab" data-toggle="tab" href="#trm" role="tab" aria-controls="trm" aria-selected="true">TRM</a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" id="flexboxcard-tab" data-toggle="tab" href="#flexboxcard" role="tab" aria-controls="flexboxcard">FLEX
+        BOX CARD</a>
+    </li>
   </ul>
   <div class="card-body">
     <div class="tab-content" id="tabsContenido">
@@ -96,6 +100,31 @@
           </table>
         </div>
       </div>
+      <div class="tab-pane fade" id="flexboxcard" role="tabpanel" aria-labelledby="flexboxcard-tab">
+        <div class="container">
+          <div class="row">
+            <div class="col-3 mb-5" *ngFor="let entry of carrosEstacionados | keyvalue">
+              <div class="card card border-success h-100">
+                <div class="d-flex justify-content-center">
+                  <i class="fas fa-car fa-7x vehiculoVerde"></i>
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title">Placa: {{entry.value.vehiculo.placa}}</h5>
+                  <p class="card-text">Especificaciones Vehiculo: Marca: {{entry.value.vehiculo.marca}}, Modelo:
+                    {{entry.value.vehiculo.modelo}}</p>
+
+                    <button *ngIf="entry.value.vehiculo.placa == null" class="btn btn-success"
+                    data-target="#registrarModal" data-toggle="modal" (click)="ingresarVehiculo(entry.key, 1)"><i class="fas fa-sign-in-alt"></i></button>
+
+                  <button *ngIf="entry.value.vehiculo.placa" class="btn btn-danger" data-target="#valorPagarModal"
+                    data-toggle="modal" (click)="darSalidaVehiculos(entry.key, 1)"><i class="fas fa-sign-out-alt"></i></button>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -116,8 +145,8 @@
 
           <div class="form-group">
             <label for="txtPlaca">Posicion</label>
-            <input type="text" class="form-control text-uppercase" id="txtPosicion" name="posicion"
-              autocomplete="off" required [(ngModel)]="vehiculoSeleccionado.posicion" readonly='true'>
+            <input type="text" class="form-control text-uppercase" id="txtPosicion" name="posicion" autocomplete="off"
+              required [(ngModel)]="vehiculoSeleccionado.posicion" readonly='true'>
           </div>
 
           <div class="form-group">
@@ -186,7 +215,8 @@
       </div>
 
       <div class="modal-body">
-        <h5>$</h5><h5 id="lblValorPagar">{{valorPagar | number: '1.0-0'}}</h5>
+        <h5>$</h5>
+        <h5 id="lblValorPagar">{{valorPagar | number: '1.0-0'}}</h5>
       </div>
     </div>
   </div>
